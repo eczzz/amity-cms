@@ -6,6 +6,7 @@ import { Dashboard } from './components/Dashboard/Dashboard';
 import { Pages } from './components/Pages/Pages';
 import { Posts } from './components/Posts/Posts';
 import { Media } from './components/Media/Media';
+import { ContentModels } from './components/ContentModels/ContentModels';
 import { Settings } from './components/Settings/Settings';
 
 function AppContent() {
@@ -34,6 +35,8 @@ function AppContent() {
         return <Posts />;
       case 'media':
         return <Media />;
+      case 'content-models':
+        return <ContentModels />;
       case 'settings':
         return <Settings />;
       default:

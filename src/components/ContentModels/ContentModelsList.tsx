@@ -7,9 +7,10 @@ import { useAuth } from '../../contexts/AuthContext';
 
 interface ContentModelsListProps {
   onEdit: (model: ContentModel | null) => void;
+  onViewEntries: (model: ContentModel) => void;
 }
 
-export function ContentModelsList({ onEdit }: ContentModelsListProps) {
+export function ContentModelsList({ onEdit, onViewEntries }: ContentModelsListProps) {
   const [models, setModels] = useState<ContentModel[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -128,7 +129,7 @@ export function ContentModelsList({ onEdit }: ContentModelsListProps) {
           <div
             key={model.id}
             className="card-hover p-6 cursor-pointer group"
-            onClick={() => onEdit(model)}
+            onClick={() => onViewEntries(model)}
           >
             <div className="flex items-start justify-between mb-4">
               <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">

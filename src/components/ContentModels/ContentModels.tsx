@@ -1,34 +1,77 @@
 import { useState } from 'react';
-import { ContentModel } from '../../types';
+import { ContentModel, ContentEntry } from '../../types';
 import { ContentModelsList } from './ContentModelsList';
 import { ContentModelEditor } from './ContentModelEditor';
+import { ContentEntriesList } from './ContentEntriesList';
+import { ContentEntryEditor } from './ContentEntryEditor';
+
+type ViewState =
+  | { view: 'models' }
+  | { view: 'model-editor'; model: ContentModel | null }
+  | { view: 'entries'; model: ContentModel }
+  | { view: 'entry-editor'; model: ContentModel; entry: ContentEntry | null };
 
 export function ContentModels() {
-  const [editingModel, setEditingModel] = useState<ContentModel | null | undefined>(undefined);
+  const [viewState, setViewState] = useState<ViewState>({ view: 'models' });
 
-  const handleEdit = (model: ContentModel | null) => {
-    setEditingModel(model);
+  // Navigation handlers
+  const handleEditModel = (model: ContentModel | null) => {
+    setViewState({ view: 'model-editor', model });
   };
 
-  const handleBack = () => {
-    setEditingModel(undefined);
+  const handleViewEntries = (model: ContentModel) => {
+    setViewState({ view: 'entries', model });
   };
 
-  const handleSave = () => {
-    setEditingModel(undefined);
+  const handleEditEntry = (model: ContentModel, entry: ContentEntry | null) => {
+    setViewState({ view: 'entry-editor', model, entry });
   };
 
-  // Show editor when editingModel is not undefined
-  if (editingModel !== undefined) {
+  const handleBackToModels = () => {
+    setViewState({ view: 'models' });
+  };
+
+  const handleBackToEntries = (model: ContentModel) => {
+    setViewState({ view: 'entries', model });
+  };
+
+  // Render appropriate view based on state
+  if (viewState.view === 'model-editor') {
     return (
       <ContentModelEditor
-        model={editingModel}
-        onBack={handleBack}
-        onSave={handleSave}
+        model={viewState.model}
+        onBack={handleBackToModels}
+        onSave={handleBackToModels}
       />
     );
   }
 
-  // Show list view by default
-  return <ContentModelsList onEdit={handleEdit} />;
+  if (viewState.view === 'entries') {
+    return (
+      <ContentEntriesList
+        model={viewState.model}
+        onBack={handleBackToModels}
+        onEditEntry={(entry) => handleEditEntry(viewState.model, entry)}
+      />
+    );
+  }
+
+  if (viewState.view === 'entry-editor') {
+    return (
+      <ContentEntryEditor
+        model={viewState.model}
+        entry={viewState.entry}
+        onBack={() => handleBackToEntries(viewState.model)}
+        onSave={() => handleBackToEntries(viewState.model)}
+      />
+    );
+  }
+
+  // Default: show models list
+  return (
+    <ContentModelsList
+      onEdit={handleEditModel}
+      onViewEntries={handleViewEntries}
+    />
+  );
 }

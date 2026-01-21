@@ -1,3 +1,142 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply font-sans text-text-primary bg-gradient-main;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold;
+  }
+
+  h1 {
+    @apply text-hero leading-tight -tracking-tight;
+  }
+
+  h2 {
+    @apply text-section leading-snug -tracking-tight;
+  }
+
+  h3 {
+    @apply text-2xl leading-snug -tracking-tight;
+  }
+
+  h4 {
+    @apply text-xl;
+  }
+
+  h5, h6 {
+    @apply text-lg;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+
+  button {
+    @apply transition-colors duration-200;
+  }
+
+  input, textarea, select {
+    @apply rounded-md border border-bg-slate focus:ring-2 focus:ring-primary focus:border-transparent outline-none;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-primary text-white font-semibold py-3 px-6 rounded-md hover:shadow-lg transition-shadow;
+  }
+
+  .btn-secondary {
+    @apply bg-bg-light-gray text-text-primary font-semibold py-3 px-6 rounded-md hover:bg-bg-slate transition-colors;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-bg-slate;
+  }
+
+  .card-hover {
+    @apply card hover:shadow-md hover:border-primary transition-all;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-primary bg-clip-text text-transparent;
+  }
+
+  .badge {
+    @apply inline-block px-3 py-1 rounded-pill text-small font-medium;
+  }
+}
+
+@layer utilities {
+  .gradient-overlay {
+    @apply bg-gradient-to-br from-blue-500/40 via-purple-500/40 to-transparent;
+  }
+
+  .gradient-bg {
+    background: linear-gradient(45deg, #0a1128, #1a2a4a, #2a3a5a);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+  }
+
+  .gradient-container {
+    filter: url(#gooey);
+  }
+
+  .gradient-circle {
+    animation: float 8s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .gradient-circle:nth-child(1) {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+
+  .gradient-circle:nth-child(2) {
+    top: 50%;
+    right: 10%;
+    animation-delay: 2s;
+  }
+
+  .gradient-circle:nth-child(3) {
+    bottom: 10%;
+    left: 40%;
+    animation-delay: 4s;
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(50px, 50px);
+  }
+  66% {
+    transform: translate(-50px, 50px);
+  }
+}

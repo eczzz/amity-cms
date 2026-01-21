@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { X, Save, Trash2 } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../../lib/supabase';
 import { User } from '../../types';
 
@@ -147,27 +148,27 @@ export function UserEditor({ user, isOpen, onClose, onSave }: UserEditorProps) {
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
 
       <div className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-xl overflow-y-auto">
-        <div className="p-6 border-b border-slate-200 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-slate-900">
+        <div className="p-6 border-b border-bg-slate flex items-center justify-between">
+          <h2 className="text-lg font-heading font-semibold text-text-primary">
             {user ? 'Edit User' : 'Add New User'}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition"
+            className="p-2 hover:bg-bg-light-gray rounded-md transition"
           >
-            <X className="w-5 h-5 text-slate-600" />
+            <FontAwesomeIcon icon={faTimes} className="w-5 h-5 text-text-muted" />
           </button>
         </div>
 
         <div className="p-6 space-y-4">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-small">
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-small font-medium text-text-primary mb-2">
               Email *
             </label>
             <input
@@ -175,58 +176,58 @@ export function UserEditor({ user, isOpen, onClose, onSave }: UserEditorProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={!!user}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none disabled:bg-slate-50"
+              className="w-full px-4 py-2 text-small disabled:bg-bg-light-gray"
               placeholder="user@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-small font-medium text-text-primary mb-2">
               First Name
             </label>
             <input
               type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 text-small"
               placeholder="John"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-small font-medium text-text-primary mb-2">
               Last Name
             </label>
             <input
               type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 text-small"
               placeholder="Doe"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-small font-medium text-text-primary mb-2">
               Phone Number
             </label>
             <input
               type="tel"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 text-small"
               placeholder="+1 (555) 123-4567"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-small font-medium text-text-primary mb-2">
               Role
             </label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value as 'admin' | 'editor' | 'viewer')}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 text-small"
             >
               <option value="viewer">Viewer - Read only access</option>
               <option value="editor">Editor - Can create and edit content</option>
@@ -235,34 +236,33 @@ export function UserEditor({ user, isOpen, onClose, onSave }: UserEditorProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-small font-medium text-text-primary mb-2">
               {user ? 'Change Password (leave blank to keep current)' : 'Password *'}
             </label>
             <input
               type={showPassword ? 'text' : 'password'}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 text-small"
               placeholder={user ? 'Optional' : 'Minimum 8 characters'}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-xs text-slate-600 hover:text-slate-900 mt-1"
+              className="text-tiny text-text-muted hover:text-text-primary mt-1"
             >
               {showPassword ? 'Hide' : 'Show'} password
             </button>
           </div>
         </div>
 
-        <div className="p-6 border-t border-slate-200 space-y-3">
+        <div className="p-6 border-t border-bg-slate space-y-3">
           <button
             onClick={handleSave}
             disabled={saving}
-            style={{ height: '30px' }}
-            className="w-full bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full btn-primary py-2 text-small flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Save className="w-4 h-4" />
+            <FontAwesomeIcon icon={faSave} className="w-4 h-4" />
             {saving ? 'Saving...' : 'Save User'}
           </button>
 
@@ -270,18 +270,16 @@ export function UserEditor({ user, isOpen, onClose, onSave }: UserEditorProps) {
             <button
               onClick={handleDelete}
               disabled={saving}
-              className="w-full bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              style={{ height: '30px' }}
+              className="w-full bg-red-600 text-white rounded-md hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 py-2 text-small"
             >
-              <Trash2 className="w-4 h-4" />
+              <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
               Delete User
             </button>
           )}
 
           <button
             onClick={onClose}
-            style={{ height: '30px' }}
-            className="w-full border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition flex items-center justify-center"
+            className="w-full btn-secondary py-2 text-small flex items-center justify-center"
           >
             Cancel
           </button>

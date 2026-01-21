@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Save } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSave } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../../lib/supabase';
 
 export function ChangePassword() {
@@ -48,63 +49,63 @@ export function ChangePassword() {
 
   return (
     <div className="max-w-2xl">
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-        <h2 className="text-xl font-semibold text-slate-900 mb-6">Change Password</h2>
+      <div className="card p-6">
+        <h2 className="text-xl font-heading font-semibold text-text-primary mb-6">Change Password</h2>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6 text-small">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
+          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md mb-6 text-small">
             Password updated successfully
           </div>
         )}
 
         <form onSubmit={handleChangePassword} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-small font-medium text-text-primary mb-2">
               Current Password
             </label>
             <input
               type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 text-small"
               placeholder="••••••••"
             />
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-tiny text-text-muted mt-1">
               Note: You'll be logged out after changing your password for security
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-small font-medium text-text-primary mb-2">
               New Password
             </label>
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 text-small"
               placeholder="••••••••"
             />
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-tiny text-text-muted mt-1">
               Minimum 8 characters
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-small font-medium text-text-primary mb-2">
               Confirm New Password
             </label>
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 text-small"
               placeholder="••••••••"
             />
           </div>
@@ -112,10 +113,9 @@ export function ChangePassword() {
           <button
             type="submit"
             disabled={saving}
-            style={{ height: '30px' }}
-            className="w-full bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-6"
+            className="w-full btn-primary py-2 text-small flex items-center justify-center gap-2 mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Save className="w-4 h-4" />
+            <FontAwesomeIcon icon={faSave} className="w-4 h-4" />
             {saving ? 'Updating...' : 'Update Password'}
           </button>
         </form>

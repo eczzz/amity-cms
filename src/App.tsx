@@ -5,6 +5,7 @@ import { MainLayout } from './components/Layout/MainLayout';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { Pages } from './components/Pages/Pages';
 import { Posts } from './components/Posts/Posts';
+import { Media } from './components/Media/Media';
 import { Settings } from './components/Settings/Settings';
 
 function AppContent() {
@@ -31,6 +32,8 @@ function AppContent() {
         return <Pages />;
       case 'posts':
         return <Posts />;
+      case 'media':
+        return <Media />;
       case 'settings':
         return <Settings />;
       default:

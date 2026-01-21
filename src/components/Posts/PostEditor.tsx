@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Save } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faSave } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../../lib/supabase';
 import { Post } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
@@ -104,104 +105,104 @@ export function PostEditor({ post, onBack, onSave }: PostEditorProps) {
       <div className="mb-8">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition mb-4"
+          className="flex items-center gap-2 text-text-muted hover:text-text-primary transition mb-4"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <FontAwesomeIcon icon={faArrowLeft} className="w-4 h-4" />
           Back to Posts
         </button>
-        <h1 className="text-3xl font-bold text-slate-900">
+        <h1>
           {post ? 'Edit Post' : 'Create New Post'}
         </h1>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6 text-small">
           {error}
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <div className="card p-6">
             <div className="mb-4">
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-small font-medium text-text-primary mb-2">
                 Title *
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 text-small"
                 placeholder="Post title"
               />
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-small font-medium text-text-primary mb-2">
                 Slug *
               </label>
               <input
                 type="text"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 text-small"
                 placeholder="post-url-slug"
               />
-              <p className="text-xs text-slate-500 mt-1">URL: /{slug}</p>
+              <p className="text-tiny text-text-muted mt-1">URL: /{slug}</p>
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-small font-medium text-text-primary mb-2">
                 Excerpt
               </label>
               <textarea
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none resize-none"
+                className="w-full px-4 py-2 text-small resize-none"
                 placeholder="Brief summary of the post"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-small font-medium text-text-primary mb-2">
                 Content
               </label>
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 rows={12}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none resize-none"
+                className="w-full px-4 py-2 text-small resize-none"
                 placeholder="Write your post content here..."
               />
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h3 className="font-semibold text-slate-900 mb-4">SEO Settings</h3>
+          <div className="card p-6">
+            <h3 className="font-heading font-semibold text-text-primary mb-4">SEO Settings</h3>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-small font-medium text-text-primary mb-2">
                 Meta Description
               </label>
               <textarea
                 value={metaDescription}
                 onChange={(e) => setMetaDescription(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none resize-none"
+                className="w-full px-4 py-2 text-small resize-none"
                 placeholder="Brief description for search engines"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-small font-medium text-text-primary mb-2">
                 Meta Keywords
               </label>
               <input
                 type="text"
                 value={metaKeywords}
                 onChange={(e) => setMetaKeywords(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 text-small"
                 placeholder="keyword1, keyword2, keyword3"
               />
             </div>
@@ -209,13 +210,13 @@ export function PostEditor({ post, onBack, onSave }: PostEditorProps) {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h3 className="font-semibold text-slate-900 mb-4">Featured Image</h3>
+          <div className="card p-6">
+            <h3 className="font-heading font-semibold text-text-primary mb-4">Featured Image</h3>
             <input
               type="text"
               value={featuredImage}
               onChange={(e) => setFeaturedImage(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 text-small"
               placeholder="Image URL"
             />
             {featuredImage && (
@@ -223,7 +224,7 @@ export function PostEditor({ post, onBack, onSave }: PostEditorProps) {
                 <img
                   src={featuredImage}
                   alt="Featured"
-                  className="w-full rounded-lg border border-slate-200"
+                  className="w-full rounded-md border border-bg-slate"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                   }}
@@ -232,17 +233,17 @@ export function PostEditor({ post, onBack, onSave }: PostEditorProps) {
             )}
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h3 className="font-semibold text-slate-900 mb-4">Publish</h3>
+          <div className="card p-6">
+            <h3 className="font-heading font-semibold text-text-primary mb-4">Publish</h3>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-small font-medium text-text-primary mb-2">
                 Status
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as 'draft' | 'published')}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 text-small"
               >
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
@@ -252,10 +253,9 @@ export function PostEditor({ post, onBack, onSave }: PostEditorProps) {
             <button
               onClick={handleSave}
               disabled={saving}
-              style={{ height: '30px' }}
-              className="w-full bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full btn-primary py-2 text-small flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Save className="w-4 h-4" />
+              <FontAwesomeIcon icon={faSave} className="w-4 h-4" />
               {saving ? 'Saving...' : 'Save Post'}
             </button>
           </div>

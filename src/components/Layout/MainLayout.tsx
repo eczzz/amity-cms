@@ -9,7 +9,7 @@ interface MainLayoutProps {
 
 export function MainLayout({ currentView, onViewChange, children }: MainLayoutProps) {
   return (
-    <div className="flex h-screen bg-slate-50">
+    <div className="flex h-screen bg-gradient-section">
       <Sidebar currentView={currentView} onViewChange={onViewChange} />
       <main className="flex-1 overflow-auto">
         {children}

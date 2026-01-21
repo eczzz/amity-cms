@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faUser, faLock, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../../lib/supabase';
 import { Setting } from '../../types';
 import { ChangePassword } from './ChangePassword';
@@ -79,149 +79,157 @@ export function Settings() {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
-  return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1>Settings</h1>
-        <p className="text-text-muted mt-2">Manage your account and system configuration</p>
-      </div>
+  const tabs = [
+    { id: 'profile' as SettingsTab, label: 'Profile Settings', icon: faUser },
+    { id: 'password' as SettingsTab, label: 'Change Password', icon: faLock },
+    { id: 'users' as SettingsTab, label: 'User Management', icon: faUsers },
+  ];
 
-      <div className="flex gap-8">
-        <div className="w-48">
-          <div className="card p-4">
-            <nav className="space-y-2">
-              <button
-                onClick={() => setActiveTab('profile')}
-                className={`w-full text-left px-4 py-2 rounded-md transition ${
-                  activeTab === 'profile'
-                    ? 'bg-primary text-white'
-                    : 'text-text-primary hover:bg-bg-light-gray'
-                }`}
-              >
-                Profile Settings
-              </button>
-              <button
-                onClick={() => setActiveTab('password')}
-                className={`w-full text-left px-4 py-2 rounded-md transition ${
-                  activeTab === 'password'
-                    ? 'bg-primary text-white'
-                    : 'text-text-primary hover:bg-bg-light-gray'
-                }`}
-              >
-                Change Password
-              </button>
-              <button
-                onClick={() => setActiveTab('users')}
-                className={`w-full text-left px-4 py-2 rounded-md transition ${
-                  activeTab === 'users'
-                    ? 'bg-primary text-white'
-                    : 'text-text-primary hover:bg-bg-light-gray'
-                }`}
-              >
-                User Management
-              </button>
-            </nav>
-          </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
+      {/* Header Section */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="px-8 py-6">
+          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+          <p className="text-text-muted mt-1 text-sm">Manage your account and system configuration</p>
         </div>
 
-        <div className="flex-1">
+        {/* Horizontal Tab Navigation */}
+        <div className="px-8">
+          <nav className="flex gap-8 border-b border-gray-200">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-1 py-4 text-sm font-medium border-b-2 transition-all ${
+                  activeTab === tab.id
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <FontAwesomeIcon icon={tab.icon} className="w-4 h-4" />
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
+
+      {/* Content Area */}
+      <div className="px-8 py-8">
+        <div className="max-w-4xl mx-auto">
           {activeTab === 'profile' && (
             <>
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6 text-small">
-                  {error}
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm flex items-start gap-3">
+                  <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <span>{error}</span>
                 </div>
               )}
 
               {success && (
-                <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md mb-6 text-small">
-                  Settings saved successfully
+                <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6 text-sm flex items-start gap-3">
+                  <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span>Settings saved successfully</span>
                 </div>
               )}
 
-              <div className="max-w-3xl space-y-6">
-                <div className="card p-6">
-                  <h2 className="font-heading font-semibold text-text-primary mb-6">General Information</h2>
+              <div className="space-y-6">
+                {/* General Information Card */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                  <div className="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                    <h2 className="text-lg font-semibold text-gray-900">General Information</h2>
+                    <p className="text-xs text-gray-500 mt-1">Basic site configuration and details</p>
+                  </div>
 
-                  <div className="space-y-4">
+                  <div className="p-6 space-y-5">
                     <div>
-                      <label className="block text-small font-medium text-text-primary mb-2">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
                         Site Name
                       </label>
                       <input
                         type="text"
                         value={settings.site_name}
                         onChange={(e) => handleChange('site_name', e.target.value)}
-                        className="w-full px-4 py-2 text-small"
+                        className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
                         placeholder="Your Site Name"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-small font-medium text-text-primary mb-2">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
                         Site Description
                       </label>
                       <textarea
                         value={settings.site_description}
                         onChange={(e) => handleChange('site_description', e.target.value)}
-                        rows={3}
-                        className="w-full px-4 py-2 text-small resize-none"
+                        rows={4}
+                        className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition resize-none"
                         placeholder="Brief description of your site"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="card p-6">
-                  <h2 className="font-heading font-semibold text-text-primary mb-6">Contact Information</h2>
+                {/* Contact Information Card */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                  <div className="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                    <h2 className="text-lg font-semibold text-gray-900">Contact Information</h2>
+                    <p className="text-xs text-gray-500 mt-1">How people can reach you</p>
+                  </div>
 
-                  <div className="space-y-4">
+                  <div className="p-6 space-y-5">
                     <div>
-                      <label className="block text-small font-medium text-text-primary mb-2">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
                         Contact Email
                       </label>
                       <input
                         type="email"
                         value={settings.contact_email}
                         onChange={(e) => handleChange('contact_email', e.target.value)}
-                        className="w-full px-4 py-2 text-small"
+                        className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
                         placeholder="contact@example.com"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-small font-medium text-text-primary mb-2">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
                         Contact Phone
                       </label>
                       <input
                         type="tel"
                         value={settings.contact_phone}
                         onChange={(e) => handleChange('contact_phone', e.target.value)}
-                        className="w-full px-4 py-2 text-small"
+                        className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
                         placeholder="+1 (555) 123-4567"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-small font-medium text-text-primary mb-2">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
                         Address
                       </label>
                       <textarea
                         value={settings.address}
                         onChange={(e) => handleChange('address', e.target.value)}
                         rows={3}
-                        className="w-full px-4 py-2 text-small resize-none"
+                        className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition resize-none"
                         placeholder="Your business address"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="flex justify-end">
+                {/* Save Button */}
+                <div className="flex justify-end pt-2">
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="btn-primary py-2 text-small flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn-primary py-2.5 px-6 text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transition-all"
                   >
                     <FontAwesomeIcon icon={faSave} className="w-4 h-4" />
                     {saving ? 'Saving...' : 'Save Settings'}

@@ -6,12 +6,13 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { DynamicField } from './DynamicField';
 import { validateAllFields } from './FieldValidation';
+import { Toast } from '../Common/Toast';
 
 interface ContentEntryEditorProps {
   model: ContentModel;
   entry: ContentEntry | null;
   onBack: () => void;
-  onSave: () => void;
+  onSave?: () => void;
 }
 
 export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntryEditorProps) {
@@ -21,6 +22,7 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
   const [fields, setFields] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; title: string; message?: string } | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -102,6 +104,12 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
           .eq('id', entry.id);
 
         if (error) throw error;
+        setToast({
+          type: 'success',
+          title: 'Entry updated',
+          message: 'Your changes have been saved successfully',
+        });
+        onSave?.();
       } else {
         // Create new entry
         const { error } = await supabase
@@ -109,12 +117,20 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
           .insert([entryData]);
 
         if (error) throw error;
+        setToast({
+          type: 'success',
+          title: 'Entry created',
+          message: 'Your new entry has been created successfully',
+        });
+        onSave?.();
       }
-
-      onSave();
     } catch (error) {
       console.error('Error saving entry:', error);
-      alert('Failed to save entry. Please try again.');
+      setToast({
+        type: 'error',
+        title: 'Failed to save entry',
+        message: 'Please check your entries and try again',
+      });
     } finally {
       setSaving(false);
     }
@@ -220,7 +236,7 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
                         Copy JSON
                       </button>
                     </div>
-                    <pre className="bg-bg-dark-gray text-white p-4 rounded-md overflow-x-auto text-tiny font-mono">
+                    <pre className="bg-slate-900 text-gray-100 p-4 rounded-md text-tiny font-mono whitespace-pre-wrap break-words w-full">
                       {JSON.stringify(generateJsonOutput(), null, 2)}
                     </pre>
                   </div>
@@ -284,6 +300,15 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
           </div>
         </div>
       </div>
+
+      {toast && (
+        <Toast
+          type={toast.type}
+          title={toast.title}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt, faFileAlt, faNewspaper, faCog, faSignOutAlt, faImages, faCubes } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faSignOutAlt, faImages, faCubes, faFileLines } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface SidebarProps {
@@ -13,11 +13,9 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
   const { signOut, user } = useAuth();
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: faTachometerAlt },
-    { id: 'pages', label: 'Pages', icon: faFileAlt },
-    { id: 'posts', label: 'Blog Posts', icon: faNewspaper },
-    { id: 'media', label: 'Media', icon: faImages },
+    { id: 'content', label: 'Content', icon: faFileLines },
     { id: 'content-models', label: 'Content Models', icon: faCubes },
+    { id: 'media', label: 'Media', icon: faImages },
     { id: 'settings', label: 'Settings', icon: faCog },
   ];
 

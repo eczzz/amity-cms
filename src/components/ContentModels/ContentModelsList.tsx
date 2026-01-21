@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faCubes, faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faCubes, faPencilAlt, faTrash, faCode } from '@fortawesome/free-solid-svg-icons';
 import { ContentModel } from '../../types';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { SchemaViewer } from './SchemaViewer';
 
 interface ContentModelsListProps {
   onEdit: (model: ContentModel | null) => void;
@@ -13,6 +14,7 @@ interface ContentModelsListProps {
 export function ContentModelsList({ onEdit, onViewEntries }: ContentModelsListProps) {
   const [models, setModels] = useState<ContentModel[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewingSchema, setViewingSchema] = useState<ContentModel | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -129,7 +131,7 @@ export function ContentModelsList({ onEdit, onViewEntries }: ContentModelsListPr
           <div
             key={model.id}
             className="card-hover p-6 cursor-pointer group"
-            onClick={() => onViewEntries(model)}
+            onClick={() => onEdit(model)}
           >
             <div className="flex items-start justify-between mb-4">
               <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
@@ -138,30 +140,38 @@ export function ContentModelsList({ onEdit, onViewEntries }: ContentModelsListPr
                   className="w-6 h-6 text-white"
                 />
               </div>
-              {model.created_by === user?.id && (
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEdit(model);
-                    }}
-                    className="p-2 hover:bg-bg-light-gray rounded-md transition"
-                    title="Edit model"
-                  >
-                    <FontAwesomeIcon icon={faPencilAlt} className="w-4 h-4 text-primary" />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(model.id);
-                    }}
-                    className="p-2 hover:bg-red-50 rounded-md transition"
-                    title="Delete model"
-                  >
-                    <FontAwesomeIcon icon={faTrash} className="w-4 h-4 text-red-600" />
-                  </button>
-                </div>
-              )}
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setViewingSchema(model);
+                  }}
+                  className="p-2 hover:bg-bg-light-gray rounded-md transition"
+                  title="View schema"
+                >
+                  <FontAwesomeIcon icon={faCode} className="w-4 h-4 text-text-muted hover:text-primary" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(model);
+                  }}
+                  className="p-2 hover:bg-bg-light-gray rounded-md transition"
+                  title="Edit model"
+                >
+                  <FontAwesomeIcon icon={faPencilAlt} className="w-4 h-4 text-text-muted hover:text-primary" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(model.id);
+                  }}
+                  className="p-2 hover:bg-red-50 rounded-md transition"
+                  title="Delete model"
+                >
+                  <FontAwesomeIcon icon={faTrash} className="w-4 h-4 text-text-muted hover:text-red-600" />
+                </button>
+              </div>
             </div>
 
             <h3 className="font-heading font-semibold text-text-primary mb-2">
@@ -179,6 +189,13 @@ export function ContentModelsList({ onEdit, onViewEntries }: ContentModelsListPr
           </div>
         ))}
       </div>
+
+      {viewingSchema && (
+        <SchemaViewer
+          model={viewingSchema}
+          onClose={() => setViewingSchema(null)}
+        />
+      )}
     </div>
   );
 }

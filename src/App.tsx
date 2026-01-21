@@ -2,16 +2,14 @@ import { useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Login } from './components/Auth/Login';
 import { MainLayout } from './components/Layout/MainLayout';
-import { Dashboard } from './components/Dashboard/Dashboard';
-import { Pages } from './components/Pages/Pages';
-import { Posts } from './components/Posts/Posts';
-import { Media } from './components/Media/Media';
+import { Content } from './components/Content/Content';
 import { ContentModels } from './components/ContentModels/ContentModels';
+import { Media } from './components/Media/Media';
 import { Settings } from './components/Settings/Settings';
 
 function AppContent() {
   const { user, loading } = useAuth();
-  const [currentView, setCurrentView] = useState('dashboard');
+  const [currentView, setCurrentView] = useState('content');
 
   if (loading) {
     return (
@@ -27,20 +25,16 @@ function AppContent() {
 
   const renderView = () => {
     switch (currentView) {
-      case 'dashboard':
-        return <Dashboard />;
-      case 'pages':
-        return <Pages />;
-      case 'posts':
-        return <Posts />;
-      case 'media':
-        return <Media />;
+      case 'content':
+        return <Content />;
       case 'content-models':
         return <ContentModels />;
+      case 'media':
+        return <Media />;
       case 'settings':
         return <Settings />;
       default:
-        return <Dashboard />;
+        return <Content />;
     }
   };
 

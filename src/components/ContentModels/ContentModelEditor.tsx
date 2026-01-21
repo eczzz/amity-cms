@@ -5,6 +5,7 @@ import { ContentModel, FieldDefinition } from '../../types';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { FieldBuilder } from './FieldBuilder';
+import { Toast } from '../Common/Toast';
 
 interface ContentModelEditorProps {
   model: ContentModel | null;
@@ -19,7 +20,7 @@ export function ContentModelEditor({ model, onBack, onSave }: ContentModelEditor
   const [icon, setIcon] = useState('faFileAlt');
   const [fields, setFields] = useState<FieldDefinition[]>([]);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; title: string; message?: string } | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -60,18 +61,26 @@ export function ContentModelEditor({ model, onBack, onSave }: ContentModelEditor
   const handleSave = async () => {
     // Validation
     if (!name.trim()) {
-      setError('Model name is required');
+      setToast({
+        type: 'error',
+        title: 'Model name is required',
+        message: 'Please enter a name for your content model',
+      });
       return;
     }
 
     const apiIdError = validateApiIdentifier(apiIdentifier);
     if (apiIdError) {
-      setError(apiIdError);
+      setToast({
+        type: 'error',
+        title: 'Invalid API identifier',
+        message: apiIdError,
+      });
       return;
     }
 
     setSaving(true);
-    setError('');
+    setToast(null);
 
     try {
       const modelData = {
@@ -91,6 +100,11 @@ export function ContentModelEditor({ model, onBack, onSave }: ContentModelEditor
           .eq('id', model.id);
 
         if (updateError) throw updateError;
+        setToast({
+          type: 'success',
+          title: 'Model updated',
+          message: 'Your content model has been updated successfully',
+        });
       } else {
         // Create new model
         const { error: insertError } = await supabase
@@ -101,12 +115,22 @@ export function ContentModelEditor({ model, onBack, onSave }: ContentModelEditor
           });
 
         if (insertError) throw insertError;
+        setToast({
+          type: 'success',
+          title: 'Model created',
+          message: 'Your new content model has been created successfully',
+        });
       }
 
+      // Call onSave to refresh the list but don't navigate away
       onSave();
     } catch (err: any) {
       console.error('Error saving model:', err);
-      setError(err.message || 'Failed to save content model');
+      setToast({
+        type: 'error',
+        title: 'Failed to save model',
+        message: err.message || 'Please check your information and try again',
+      });
     } finally {
       setSaving(false);
     }
@@ -129,13 +153,6 @@ export function ContentModelEditor({ model, onBack, onSave }: ContentModelEditor
           </p>
         </div>
       </div>
-
-      {/* Error Alert */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6 text-small">
-          {error}
-        </div>
-      )}
 
       {/* Two-column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -241,6 +258,16 @@ export function ContentModelEditor({ model, onBack, onSave }: ContentModelEditor
           </button>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          type={toast.type}
+          title={toast.title}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

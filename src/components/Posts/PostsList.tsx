@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faPencilAlt, faTrash, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../../lib/supabase';
 import { Post } from '../../types';
-import { useAuth } from '../../contexts/AuthContext';
 
 interface PostsListProps {
   onEdit: (post: Post | null) => void;
@@ -12,7 +11,6 @@ interface PostsListProps {
 export function PostsList({ onEdit }: PostsListProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
 
   useEffect(() => {
     loadPosts();
@@ -147,15 +145,13 @@ export function PostsList({ onEdit }: PostsListProps) {
                         >
                           <FontAwesomeIcon icon={faPencilAlt} className="w-4 h-4" />
                         </button>
-                        {post.created_by === user?.id && (
-                          <button
-                            onClick={() => handleDelete(post.id)}
-                            className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition"
-                            title="Delete"
-                          >
-                            <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
-                          </button>
-                        )}
+                        <button
+                          onClick={() => handleDelete(post.id)}
+                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition"
+                          title="Delete"
+                        >
+                          <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>

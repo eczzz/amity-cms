@@ -1,23 +1,30 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCopy } from '@fortawesome/free-solid-svg-icons';
+import { ContentModel } from '../../types';
 
-interface JsonViewerProps {
-  title: string;
-  data: any;
+interface SchemaViewerProps {
+  model: ContentModel;
   onClose: () => void;
 }
 
-export function JsonViewer({ title, data, onClose }: JsonViewerProps) {
+export function SchemaViewer({ model, onClose }: SchemaViewerProps) {
   const [formatted, setFormatted] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  const getJsonString = () => {
-    return formatted ? JSON.stringify(data, null, 2) : JSON.stringify(data);
+  const getSchemaJson = () => {
+    const schema = {
+      id: model.id,
+      name: model.name,
+      api_identifier: model.api_identifier,
+      description: model.description,
+      fields: model.fields,
+    };
+    return formatted ? JSON.stringify(schema, null, 2) : JSON.stringify(schema);
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(getJsonString());
+    navigator.clipboard.writeText(getSchemaJson());
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -29,10 +36,10 @@ export function JsonViewer({ title, data, onClose }: JsonViewerProps) {
         <div className="p-6 border-b border-bg-slate flex items-center justify-between">
           <div>
             <h2 className="font-heading font-semibold text-text-primary">
-              JSON Output: {title}
+              Content Model Schema: {model.name}
             </h2>
             <p className="text-tiny text-text-muted mt-1">
-              Use this JSON structure in your frontend application
+              Use this schema on your frontend to understand the content model structure
             </p>
           </div>
           <button
@@ -72,15 +79,30 @@ export function JsonViewer({ title, data, onClose }: JsonViewerProps) {
             className="btn-secondary py-1 px-3 text-tiny flex items-center gap-2"
           >
             <FontAwesomeIcon icon={faCopy} className="w-3 h-3" />
-            {copied ? 'Copied!' : 'Copy JSON'}
+            {copied ? 'Copied!' : 'Copy Schema'}
           </button>
         </div>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 bg-slate-900">
           <pre className="text-gray-100 text-tiny font-mono whitespace-pre-wrap break-words w-full">
-            {getJsonString()}
+            {getSchemaJson()}
           </pre>
+        </div>
+
+        {/* Field Reference */}
+        <div className="px-6 py-4 border-t border-bg-slate bg-bg-light-gray text-tiny text-text-muted">
+          <p className="mb-2 font-medium text-text-primary">Field Type Reference:</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div>• short_text - Single line</div>
+            <div>• long_text - Multi-line</div>
+            <div>• rich_text - HTML/WYSIWYG</div>
+            <div>• number - Numeric</div>
+            <div>• boolean - True/false</div>
+            <div>• date - ISO date</div>
+            <div>• media - Media ID</div>
+            <div>• reference - Entry ID</div>
+          </div>
         </div>
       </div>
     </div>

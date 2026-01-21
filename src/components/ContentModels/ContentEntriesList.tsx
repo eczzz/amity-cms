@@ -12,7 +12,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ContentModel, ContentEntry } from '../../types';
 import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
 import { JsonViewer } from './JsonViewer';
 
 interface ContentEntriesListProps {
@@ -25,9 +24,11 @@ export function ContentEntriesList({ model, onBack, onEditEntry }: ContentEntrie
   const [entries, setEntries] = useState<ContentEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewingJson, setViewingJson] = useState<ContentEntry | null>(null);
-  const { user } = useAuth();
+
+  console.log('ContentEntriesList rendering with:', { model, entries, loading });
 
   useEffect(() => {
+    console.log('Loading entries for model:', model.id);
     loadEntries();
   }, [model.id]);
 
@@ -179,7 +180,10 @@ export function ContentEntriesList({ model, onBack, onEditEntry }: ContentEntrie
               <tr
                 key={entry.id}
                 className="border-b border-bg-slate last:border-0 hover:bg-bg-light-gray transition cursor-pointer"
-                onClick={() => onEditEntry(entry)}
+                onClick={() => {
+                  console.log('Row clicked, entry:', entry);
+                  onEditEntry(entry);
+                }}
               >
                 <td className="px-6 py-4">
                   <div className="font-medium text-text-primary">{entry.title}</div>
@@ -191,7 +195,7 @@ export function ContentEntriesList({ model, onBack, onEditEntry }: ContentEntrie
                   {formatDate(entry.updated_at)}
                 </td>
                 <td className="px-6 py-4">
-                  <div className="flex items-center justify-end gap-2">
+                  <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -202,30 +206,26 @@ export function ContentEntriesList({ model, onBack, onEditEntry }: ContentEntrie
                     >
                       <FontAwesomeIcon icon={faCode} className="w-4 h-4 text-primary" />
                     </button>
-                    {entry.created_by === user?.id && (
-                      <>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onEditEntry(entry);
-                          }}
-                          className="p-2 hover:bg-bg-slate rounded-md transition"
-                          title="Edit entry"
-                        >
-                          <FontAwesomeIcon icon={faPencilAlt} className="w-4 h-4 text-primary" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(entry.id);
-                          }}
-                          className="p-2 hover:bg-red-50 rounded-md transition"
-                          title="Delete entry"
-                        >
-                          <FontAwesomeIcon icon={faTrash} className="w-4 h-4 text-red-600" />
-                        </button>
-                      </>
-                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEditEntry(entry);
+                      }}
+                      className="p-2 hover:bg-bg-slate rounded-md transition"
+                      title="Edit entry"
+                    >
+                      <FontAwesomeIcon icon={faPencilAlt} className="w-4 h-4 text-primary" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(entry.id);
+                      }}
+                      className="p-2 hover:bg-red-50 rounded-md transition"
+                      title="Delete entry"
+                    >
+                      <FontAwesomeIcon icon={faTrash} className="w-4 h-4 text-red-600" />
+                    </button>
                   </div>
                 </td>
               </tr>

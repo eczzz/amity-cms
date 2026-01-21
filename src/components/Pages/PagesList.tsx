@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faPencilAlt, faTrash, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../../lib/supabase';
 import { Page } from '../../types';
-import { useAuth } from '../../contexts/AuthContext';
 
 interface PagesListProps {
   onEdit: (page: Page | null) => void;
@@ -12,7 +11,6 @@ interface PagesListProps {
 export function PagesList({ onEdit }: PagesListProps) {
   const [pages, setPages] = useState<Page[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
 
   useEffect(() => {
     loadPages();
@@ -144,15 +142,13 @@ export function PagesList({ onEdit }: PagesListProps) {
                         >
                           <FontAwesomeIcon icon={faPencilAlt} className="w-4 h-4" />
                         </button>
-                        {page.created_by === user?.id && (
-                          <button
-                            onClick={() => handleDelete(page.id)}
-                            className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition"
-                            title="Delete"
-                          >
-                            <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
-                          </button>
-                        )}
+                        <button
+                          onClick={() => handleDelete(page.id)}
+                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition"
+                          title="Delete"
+                        >
+                          <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>

@@ -78,6 +78,7 @@ export function UserEditor({ user, isOpen, onClose, onSave }: UserEditorProps) {
           return;
         }
 
+        // Create auth user with metadata (trigger auto-creates public.users record)
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password: newPassword,
@@ -85,6 +86,7 @@ export function UserEditor({ user, isOpen, onClose, onSave }: UserEditorProps) {
             data: {
               first_name: firstName,
               last_name: lastName,
+              role: role,
             },
           },
         });
@@ -92,18 +94,21 @@ export function UserEditor({ user, isOpen, onClose, onSave }: UserEditorProps) {
         if (signUpError) throw signUpError;
 
         if (signUpData.user) {
-          const { error: insertError } = await supabase
+          // Wait briefly for trigger to create record, then update with full details
+          await new Promise(resolve => setTimeout(resolve, 500));
+
+          const { error: updateError } = await supabase
             .from('users')
-            .insert({
-              id: signUpData.user.id,
-              email,
+            .update({
               first_name: firstName,
               last_name: lastName,
               phone_number: phoneNumber,
               role,
-            });
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', signUpData.user.id);
 
-          if (insertError) throw insertError;
+          if (updateError) throw updateError;
         }
       }
 

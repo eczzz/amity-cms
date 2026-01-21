@@ -35,7 +35,7 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
       onMouseEnter={() => setIsCollapsed(false)}
       onMouseLeave={() => setIsCollapsed(true)}
     >
-      <div className="p-4 border-b border-navy/50 flex items-center justify-center overflow-hidden">
+      <div className="h-20 p-4 border-b border-navy/50 flex items-center justify-center overflow-hidden">
         {isCollapsed ? (
           <img
             src="https://ketsuronmedia.com/media/favicon-icon.png"

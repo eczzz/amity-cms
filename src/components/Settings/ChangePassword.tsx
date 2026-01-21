@@ -50,7 +50,7 @@ export function ChangePassword() {
   return (
     <div className="max-w-2xl">
       <div className="card p-6">
-        <h2 className="text-xl font-heading font-semibold text-text-primary mb-6">Change Password</h2>
+        <h2 className="font-heading font-semibold text-text-primary mb-6">Change Password</h2>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6 text-small">

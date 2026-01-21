@@ -121,7 +121,7 @@ export function Dashboard() {
       </div>
 
       <div className="mt-8 card p-6">
-        <h2 className="text-xl font-heading font-bold text-text-primary mb-4">Quick Actions</h2>
+        <h2 className="font-heading font-bold text-text-primary mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 border border-bg-slate rounded-md hover:border-primary transition cursor-pointer">
             <FontAwesomeIcon icon={faFileAlt} className="w-8 h-8 text-primary mb-2" />

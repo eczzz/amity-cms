@@ -20,15 +20,15 @@
   }
 
   h1 {
-    @apply text-hero leading-tight -tracking-tight;
+    @apply text-small leading-tight -tracking-tight;
   }
 
   h2 {
-    @apply text-section leading-snug -tracking-tight;
+    @apply text-small leading-snug -tracking-tight;
   }
 
   h3 {
-    @apply text-2xl leading-snug -tracking-tight;
+    @apply text-small leading-snug -tracking-tight;
   }
 
   h4 {

@@ -141,7 +141,7 @@ export function Settings() {
 
               <div className="max-w-3xl space-y-6">
                 <div className="card p-6">
-                  <h2 className="text-xl font-heading font-semibold text-text-primary mb-6">General Information</h2>
+                  <h2 className="font-heading font-semibold text-text-primary mb-6">General Information</h2>
 
                   <div className="space-y-4">
                     <div>
@@ -173,7 +173,7 @@ export function Settings() {
                 </div>
 
                 <div className="card p-6">
-                  <h2 className="text-xl font-heading font-semibold text-text-primary mb-6">Contact Information</h2>
+                  <h2 className="font-heading font-semibold text-text-primary mb-6">Contact Information</h2>
 
                   <div className="space-y-4">
                     <div>

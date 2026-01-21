@@ -69,7 +69,7 @@ export function UserManagement() {
     <div className="max-w-6xl">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-heading font-semibold text-text-primary">User Management</h2>
+          <h2 className="font-heading font-semibold text-text-primary">User Management</h2>
           <p className="text-text-muted text-small mt-1">Manage team members and their permissions</p>
         </div>
         <button

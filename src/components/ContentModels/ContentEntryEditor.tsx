@@ -195,25 +195,13 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
 
                     {/* Dynamic Fields */}
                     {model.fields.map((field) => (
-                      <div key={field.id}>
-                        <label className="block text-small font-medium text-text-primary mb-2">
-                          {field.name}
-                          {field.required && <span className="text-red-600"> *</span>}
-                        </label>
-                        {field.help_text && (
-                          <p className="text-tiny text-text-muted mb-2">{field.help_text}</p>
-                        )}
-                        <DynamicField
-                          field={field}
-                          value={fields[field.api_identifier]}
-                          onChange={(value) => handleFieldChange(field.api_identifier, value)}
-                        />
-                        {errors[field.api_identifier] && (
-                          <p className="text-tiny text-red-600 mt-1">
-                            {errors[field.api_identifier]}
-                          </p>
-                        )}
-                      </div>
+                      <DynamicField
+                        key={field.id}
+                        field={field}
+                        value={fields[field.api_identifier]}
+                        onChange={(value) => handleFieldChange(field.api_identifier, value)}
+                        error={errors[field.api_identifier]}
+                      />
                     ))}
                   </div>
                 ) : (

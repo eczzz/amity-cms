@@ -114,7 +114,7 @@ export function PagesList({ onEdit }: PagesListProps) {
                       <div className="font-medium text-text-primary">{page.title}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-small text-text-muted">/{page.slug}</div>
+                      <div className="text-tiny text-text-muted">/{page.slug}</div>
                     </td>
                     <td className="px-6 py-4">
                       <span

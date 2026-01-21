@@ -121,10 +121,10 @@ export function UserManagement() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-small text-text-muted">{user.email}</div>
+                      <div className="text-tiny text-text-muted">{user.email}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-small text-text-muted">{user.phone_number || '-'}</div>
+                      <div className="text-tiny text-text-muted">{user.phone_number || '-'}</div>
                     </td>
                     <td className="px-6 py-4">
                       <span

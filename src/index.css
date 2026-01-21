@@ -40,7 +40,7 @@
   }
 
   p {
-    @apply leading-relaxed;
+    @apply text-tiny leading-relaxed;
   }
 
   button {

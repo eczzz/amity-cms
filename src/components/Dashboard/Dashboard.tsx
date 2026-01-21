@@ -126,17 +126,17 @@ export function Dashboard() {
           <div className="p-4 border border-bg-slate rounded-md hover:border-primary transition cursor-pointer">
             <FontAwesomeIcon icon={faFileAlt} className="w-8 h-8 text-primary mb-2" />
             <h3 className="font-medium text-text-primary">Create New Page</h3>
-            <p className="text-small text-text-muted mt-1">Add a new website page</p>
+            <p className="text-tiny text-text-muted mt-1">Add a new website page</p>
           </div>
           <div className="p-4 border border-bg-slate rounded-md hover:border-primary transition cursor-pointer">
             <FontAwesomeIcon icon={faNewspaper} className="w-8 h-8 text-primary mb-2" />
             <h3 className="font-medium text-text-primary">Write Blog Post</h3>
-            <p className="text-small text-text-muted mt-1">Create a new blog post</p>
+            <p className="text-tiny text-text-muted mt-1">Create a new blog post</p>
           </div>
           <div className="p-4 border border-bg-slate rounded-md hover:border-primary transition cursor-pointer">
             <FontAwesomeIcon icon={faImages} className="w-8 h-8 text-primary mb-2" />
             <h3 className="font-medium text-text-primary">Upload Media</h3>
-            <p className="text-small text-text-muted mt-1">Add images and files</p>
+            <p className="text-tiny text-text-muted mt-1">Add images and files</p>
           </div>
         </div>
       </div>

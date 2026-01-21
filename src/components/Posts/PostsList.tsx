@@ -113,11 +113,11 @@ export function PostsList({ onEdit }: PostsListProps) {
                     <td className="px-6 py-4">
                       <div className="font-medium text-text-primary">{post.title}</div>
                       {post.excerpt && (
-                        <div className="text-small text-text-muted mt-1 line-clamp-1">{post.excerpt}</div>
+                        <div className="text-tiny text-text-muted mt-1 line-clamp-1">{post.excerpt}</div>
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-small text-text-muted">/{post.slug}</div>
+                      <div className="text-tiny text-text-muted">/{post.slug}</div>
                     </td>
                     <td className="px-6 py-4">
                       <span

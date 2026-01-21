@@ -55,3 +55,60 @@ export interface User {
   created_at: string;
   updated_at: string;
 }
+
+// Content Models Types
+export type FieldType =
+  | 'short_text'
+  | 'long_text'
+  | 'rich_text'
+  | 'number'
+  | 'boolean'
+  | 'date'
+  | 'media'
+  | 'reference';
+
+export interface FieldDefinition {
+  id: string;
+  name: string;
+  api_identifier: string;
+  field_type: FieldType;
+  required: boolean;
+  help_text?: string;
+  validation?: {
+    min_length?: number;
+    max_length?: number;
+    min_value?: number;
+    max_value?: number;
+    pattern?: string;
+  };
+  default_value?: any;
+  reference_to?: string;
+  options?: {
+    placeholder?: string;
+    rows?: number;
+  };
+}
+
+export interface ContentModel {
+  id: string;
+  name: string;
+  api_identifier: string;
+  description: string;
+  icon: string;
+  fields: FieldDefinition[];
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ContentEntry {
+  id: string;
+  content_model_id: string;
+  title: string;
+  fields: Record<string, any>;
+  status: 'draft' | 'published' | 'archived';
+  published_at: string | null;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}

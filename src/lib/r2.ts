@@ -135,6 +135,6 @@ export async function deleteMedia(id: string): Promise<void> {
  * Get the R2 public URL for a file
  */
 export function getPublicUrl(filename: string): string {
-  const baseUrl = import.meta.env.VITE_R2_PUBLIC_URL || 'https://ketsuronmedia.com';
+  const baseUrl = import.meta.env.VITE_R2_PUBLIC_URL || '';
   return `${baseUrl}/media/${filename}`;
 }

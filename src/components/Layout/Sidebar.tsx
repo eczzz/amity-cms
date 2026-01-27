@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog, faSignOutAlt, faImages, faCubes, faFileLines } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../contexts/AuthContext';
+import { useConfig } from '../../contexts/ConfigContext';
 
 interface SidebarProps {
   currentView: string;
@@ -11,6 +12,8 @@ interface SidebarProps {
 export function Sidebar({ currentView, onViewChange }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const { signOut, user } = useAuth();
+  const { config } = useConfig();
+  const { branding } = config;
 
   const menuItems = [
     { id: 'content', label: 'Content', icon: faFileLines },
@@ -36,18 +39,26 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
     >
       <div className="h-20 p-4 border-b border-navy/50 flex items-center justify-center overflow-hidden">
         {isCollapsed ? (
-          <img
-            src="https://ketsuronmedia.com/media/favicon-icon.png"
-            alt="Ketsuron"
-            className="h-10 object-contain"
-          />
+          branding.faviconUrl ? (
+            <img
+              src={branding.faviconUrl}
+              alt={branding.businessName}
+              className="h-10 object-contain"
+            />
+          ) : (
+            <span className="text-xl font-bold">{branding.businessName.charAt(0)}</span>
+          )
         ) : (
           <div className="w-full">
-            <img
-              src="https://ketsuronmedia.com/media/ketsuron-logo-color.webp"
-              alt="Ketsuron Logo"
-              className="h-12 object-contain mx-auto"
-            />
+            {branding.logoUrl ? (
+              <img
+                src={branding.logoUrl}
+                alt={branding.businessName}
+                className="h-12 object-contain mx-auto"
+              />
+            ) : (
+              <span className="text-lg font-bold text-center block">{branding.businessName}</span>
+            )}
           </div>
         )}
       </div>

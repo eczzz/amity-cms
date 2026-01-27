@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faPencilAlt, faTrash, faGripVertical } from '@fortawesome/free-solid-svg-icons';
 import { FieldDefinition, FieldType } from '../../types';
 import { FieldEditor } from './FieldEditor';
+import { ConfirmationModal } from '../Common/ConfirmationModal';
 
 interface FieldBuilderProps {
   fields: FieldDefinition[];
@@ -25,6 +26,7 @@ export function FieldBuilder({ fields, onChange }: FieldBuilderProps) {
   const [isAddingField, setIsAddingField] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ index: number; field: FieldDefinition } | null>(null);
 
   const handleAddField = () => {
     setIsAddingField(true);
@@ -49,9 +51,18 @@ export function FieldBuilder({ fields, onChange }: FieldBuilderProps) {
   };
 
   const handleDeleteField = (index: number) => {
-    if (confirm('Are you sure you want to delete this field?')) {
-      onChange(fields.filter((_, i) => i !== index));
+    setDeleteConfirmation({ index, field: fields[index] });
+  };
+
+  const confirmDeleteField = () => {
+    if (deleteConfirmation) {
+      onChange(fields.filter((_, i) => i !== deleteConfirmation.index));
+      setDeleteConfirmation(null);
     }
+  };
+
+  const cancelDeleteField = () => {
+    setDeleteConfirmation(null);
   };
 
   const handleCloseEditor = () => {
@@ -202,6 +213,18 @@ export function FieldBuilder({ fields, onChange }: FieldBuilderProps) {
           onClose={handleCloseEditor}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={deleteConfirmation !== null}
+        title="Delete Field"
+        message={`Are you sure you want to delete the field "${deleteConfirmation?.field.name}"? This action cannot be undone.`}
+        confirmLabel="Delete Field"
+        cancelLabel="Cancel"
+        onConfirm={confirmDeleteField}
+        onCancel={cancelDeleteField}
+        variant="danger"
+      />
     </div>
   );
 }

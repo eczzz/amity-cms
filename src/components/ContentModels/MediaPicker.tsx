@@ -23,11 +23,38 @@ export function MediaPicker({ value, onChange }: MediaPickerProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
 
+  // Load selected media on mount if value exists
   useEffect(() => {
-    if (value && media.length > 0) {
+    const loadSelectedMedia = async () => {
+      if (!value) {
+        setSelectedMedia(null);
+        return;
+      }
+
+      // First check if we already have it in the media array
       const found = media.find(m => m.id === value);
-      if (found) setSelectedMedia(found);
-    }
+      if (found) {
+        setSelectedMedia(found);
+        return;
+      }
+
+      // If not, fetch it directly
+      try {
+        const { data, error } = await supabase
+          .from('media')
+          .select('*')
+          .eq('id', value)
+          .single();
+
+        if (!error && data) {
+          setSelectedMedia(data);
+        }
+      } catch (error) {
+        console.error('Error loading selected media:', error);
+      }
+    };
+
+    loadSelectedMedia();
   }, [value, media]);
 
   const loadMedia = async () => {

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useConfig } from '../../contexts/ConfigContext';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -7,7 +8,9 @@ export function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
+  const { config } = useConfig();
   const containerRef = useRef<HTMLDivElement>(null);
+  const { branding } = config;
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
@@ -60,13 +63,17 @@ export function Login() {
       </div>
 
       <div className="w-full max-w-md relative z-10">
-        <div className="rounded-lg shadow-lg p-8" style={{ backgroundColor: '#224059' }}>
+        <div className="rounded-lg shadow-lg p-8 bg-navy">
           <div className="flex items-center justify-center mb-8">
-            <img
-              src="https://ketsuronmedia.com/media/ketsuron-logo-color.webp"
-              alt="Ketsuron Logo"
-              className="h-16 object-contain"
-            />
+            {branding.logoUrl ? (
+              <img
+                src={branding.logoUrl}
+                alt={branding.businessName}
+                className="h-16 object-contain"
+              />
+            ) : (
+              <h1 className="text-2xl font-bold text-white">{branding.businessName}</h1>
+            )}
           </div>
 
           {error && (

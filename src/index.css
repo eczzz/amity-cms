@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-primary: #3b82f6;
+  --color-secondary: #8b5cf6;
+  --color-accent: #FFC844;
+  --color-navy: #224059;
+}
+
 @layer base {
   * {
     @apply box-border;

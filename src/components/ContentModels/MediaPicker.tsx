@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faImage, faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faImage, faTimes, faCheck, faUpload, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { Media } from '../../types';
 import { supabase } from '../../lib/supabase';
+import { requestPresignedUrl, uploadToR2, saveMediaMetadata } from '../../lib/r2';
+import { validateFile } from '../../lib/fileValidation';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface MediaPickerProps {
   value: string | null;
@@ -14,6 +17,11 @@ export function MediaPicker({ value, onChange }: MediaPickerProps) {
   const [media, setMedia] = useState<Media[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     if (value && media.length > 0) {
@@ -53,6 +61,71 @@ export function MediaPicker({ value, onChange }: MediaPickerProps) {
   const handleClear = () => {
     onChange(null);
     setSelectedMedia(null);
+  };
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    setUploadError(null);
+    setUploading(true);
+    setUploadProgress(0);
+
+    try {
+      // Validate file
+      const validation = await validateFile(file);
+      if (!validation.valid) {
+        setUploadError(validation.error || 'Invalid file');
+        setUploading(false);
+        return;
+      }
+
+      // Request presigned URL from backend
+      const { presignedUrl, publicUrl, filename } = await requestPresignedUrl(
+        file.name,
+        file.type
+      );
+
+      // Upload to R2
+      await uploadToR2(file, presignedUrl, setUploadProgress);
+
+      // Save metadata to Supabase
+      const { id } = await saveMediaMetadata(
+        filename,
+        publicUrl,
+        file.type,
+        file.size,
+        user.id
+      );
+
+      // Reload media list and auto-select
+      await loadMedia();
+
+      // Find and select the newly uploaded file
+      const { data: newMediaData } = await supabase
+        .from('media')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (newMediaData) {
+        handleSelect(newMediaData);
+      }
+
+      setUploadProgress(100);
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      setUploadError(error.message || 'Upload failed. Please try again.');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -109,21 +182,49 @@ export function MediaPicker({ value, onChange }: MediaPickerProps) {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="card max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col">
             {/* Header */}
-            <div className="p-6 border-b border-bg-slate flex items-center justify-between">
-              <div>
-                <h2 className="font-heading font-semibold text-text-primary">
-                  Select Media
-                </h2>
-                <p className="text-tiny text-text-muted mt-1">
-                  Choose an image or file from your media library
-                </p>
+            <div className="p-6 border-b border-bg-slate">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="font-heading font-semibold text-text-primary">
+                    Select Media
+                  </h2>
+                  <p className="text-tiny text-text-muted mt-1">
+                    Choose an image or file from your media library
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 hover:bg-bg-light-gray rounded-md transition"
+                >
+                  <FontAwesomeIcon icon={faTimes} className="w-5 h-5" />
+                </button>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-bg-light-gray rounded-md transition"
-              >
-                <FontAwesomeIcon icon={faTimes} className="w-5 h-5" />
-              </button>
+
+              {/* Upload Button */}
+              <div className="flex items-center gap-3">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*,.pdf,.csv,.txt"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+                <button
+                  onClick={handleUploadClick}
+                  disabled={uploading}
+                  className="btn-primary py-2 text-small flex items-center gap-2"
+                >
+                  <FontAwesomeIcon
+                    icon={uploading ? faSpinner : faUpload}
+                    className={`w-4 h-4 ${uploading ? 'animate-spin' : ''}`}
+                  />
+                  {uploading ? `Uploading... ${uploadProgress}%` : 'Upload New File'}
+                </button>
+
+                {uploadError && (
+                  <span className="text-tiny text-red-600">{uploadError}</span>
+                )}
+              </div>
             </div>
 
             {/* Content */}

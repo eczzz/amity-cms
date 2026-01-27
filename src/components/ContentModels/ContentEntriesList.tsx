@@ -13,6 +13,7 @@ import {
 import { ContentModel, ContentEntry } from '../../types';
 import { supabase } from '../../lib/supabase';
 import { JsonViewer } from './JsonViewer';
+import { resolveMediaFieldsForEntries } from '../../lib/contentHelpers';
 
 interface ContentEntriesListProps {
   model: ContentModel;
@@ -238,6 +239,7 @@ export function ContentEntriesList({ model, onBack, onEditEntry }: ContentEntrie
         <JsonViewer
           title={viewingJson.title}
           data={viewingJson}
+          model={model}
           onClose={() => setViewingJson(null)}
         />
       )}

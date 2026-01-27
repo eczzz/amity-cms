@@ -1,19 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCopy } from '@fortawesome/free-solid-svg-icons';
+import { ContentModel, ContentEntry } from '../../types';
+import { resolveMediaFields } from '../../lib/contentHelpers';
 
 interface JsonViewerProps {
   title: string;
-  data: any;
+  data: ContentEntry;
+  model: ContentModel;
   onClose: () => void;
 }
 
-export function JsonViewer({ title, data, onClose }: JsonViewerProps) {
+export function JsonViewer({ title, data, model, onClose }: JsonViewerProps) {
   const [formatted, setFormatted] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [resolvedData, setResolvedData] = useState<ContentEntry>(data);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadResolvedData = async () => {
+      setLoading(true);
+      try {
+        const resolved = await resolveMediaFields(data, model);
+        setResolvedData(resolved);
+      } catch (error) {
+        console.error('Error resolving media fields:', error);
+        setResolvedData(data);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadResolvedData();
+  }, [data, model]);
 
   const getJsonString = () => {
-    return formatted ? JSON.stringify(data, null, 2) : JSON.stringify(data);
+    return formatted ? JSON.stringify(resolvedData, null, 2) : JSON.stringify(resolvedData);
   };
 
   const handleCopy = () => {
@@ -78,9 +99,13 @@ export function JsonViewer({ title, data, onClose }: JsonViewerProps) {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 bg-slate-900">
-          <pre className="text-gray-100 text-tiny font-mono whitespace-pre-wrap break-words w-full">
-            {getJsonString()}
-          </pre>
+          {loading ? (
+            <div className="text-gray-100 text-tiny">Loading media URLs...</div>
+          ) : (
+            <pre className="text-gray-100 text-tiny font-mono whitespace-pre-wrap break-words w-full">
+              {getJsonString()}
+            </pre>
+          )}
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { Media } from '../../types';
 import { formatFileSize } from '../../lib/fileValidation';
 import { deleteMedia } from '../../lib/r2';
 import { useAuth } from '../../contexts/AuthContext';
+import { ConfirmationModal } from '../Common/ConfirmationModal';
 
 interface MediaCardProps {
   media: Media;
@@ -16,6 +17,8 @@ export function MediaCard({ media, onDelete }: MediaCardProps) {
   const [copied, setCopied] = useState(false);
   const [showActions, setShowActions] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const isImage = media.mime_type.startsWith('image/');
   const isPdf = media.mime_type === 'application/pdf';
@@ -28,19 +31,28 @@ export function MediaCard({ media, onDelete }: MediaCardProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this file?')) return;
+  const handleDeleteClick = () => {
+    setShowDeleteConfirm(true);
+  };
 
+  const confirmDelete = async () => {
     setDeleting(true);
+    setDeleteError(null);
     try {
       await deleteMedia(media.id);
+      setShowDeleteConfirm(false);
       onDelete();
     } catch (error) {
       console.error('Delete failed:', error);
-      alert('Failed to delete file');
+      setDeleteError('Failed to delete file. Please try again.');
     } finally {
       setDeleting(false);
     }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setDeleteError(null);
   };
 
   const getFileIcon = () => {
@@ -100,7 +112,7 @@ export function MediaCard({ media, onDelete }: MediaCardProps) {
             </button>
             {isOwnFile && (
               <button
-                onClick={handleDelete}
+                onClick={handleDeleteClick}
                 disabled={deleting}
                 className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition disabled:opacity-50"
                 title="Delete"
@@ -129,6 +141,18 @@ export function MediaCard({ media, onDelete }: MediaCardProps) {
           <p className="text-tiny text-green-600 mt-2">✓ URL copied</p>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        title="Delete File"
+        message={`Are you sure you want to delete "${media.filename}"? This action cannot be undone.${deleteError ? `\n\nError: ${deleteError}` : ''}`}
+        confirmLabel={deleting ? 'Deleting...' : 'Delete File'}
+        cancelLabel="Cancel"
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+        variant="danger"
+      />
     </div>
   );
 }

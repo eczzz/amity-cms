@@ -65,7 +65,18 @@ export type FieldType =
   | 'boolean'
   | 'date'
   | 'media'
-  | 'reference';
+  | 'reference'
+  | 'button'
+  | 'array';
+
+export type ArrayItemFieldType = 'short_text' | 'long_text' | 'number' | 'boolean' | 'media' | 'button';
+
+export interface ArrayItemField {
+  name: string;
+  api_identifier: string;
+  field_type: ArrayItemFieldType;
+  required?: boolean;
+}
 
 export interface FieldDefinition {
   id: string;
@@ -86,6 +97,7 @@ export interface FieldDefinition {
   options?: {
     placeholder?: string;
     rows?: number;
+    item_fields?: ArrayItemField[];
   };
 }
 

@@ -12,14 +12,24 @@ export function validateField(
   field: FieldDefinition,
   value: any
 ): string | null {
-  // Required check
-  if (field.required && !value && value !== 0 && value !== false) {
-    return `${field.name} is required`;
-  }
-
-  // Skip validation if field is empty and not required
-  if (!value && value !== 0 && value !== false) {
+  // Required check — handle structured types (button/array) separately
+  if (field.field_type === 'button') {
+    if (field.required && (!value || typeof value !== 'object' || (!value.text && !value.url))) {
+      return `${field.name} is required`;
+    }
+    if (!value || typeof value !== 'object') return null;
+  } else if (field.field_type === 'array') {
+    if (field.required && (!Array.isArray(value) || value.length === 0)) {
+      return `${field.name} must have at least one item`;
+    }
     return null;
+  } else {
+    if (field.required && !value && value !== 0 && value !== false) {
+      return `${field.name} is required`;
+    }
+    if (!value && value !== 0 && value !== false) {
+      return null;
+    }
   }
 
   // Type-specific validation
@@ -67,10 +77,36 @@ export function validateField(
       break;
 
     case 'media':
+      // Media fields store URLs
+      if (typeof value === 'string' && value.length > 0) {
+        try {
+          new URL(value);
+        } catch {
+          if (!value.startsWith('/')) {
+            return `${field.name} must be a valid URL`;
+          }
+        }
+      }
+      break;
+
     case 'reference':
-      // These should be UUIDs - basic format check
+      // References should be UUIDs
       if (typeof value === 'string' && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) {
         return `${field.name} must be a valid reference`;
+      }
+      break;
+
+    case 'button':
+      if (field.required && typeof value === 'object' && value !== null) {
+        if (!value.text || !value.url) {
+          return `${field.name} requires both a label and a URL`;
+        }
+      }
+      break;
+
+    case 'array':
+      if (field.required && (!Array.isArray(value) || value.length === 0)) {
+        return `${field.name} must have at least one item`;
       }
       break;
   }

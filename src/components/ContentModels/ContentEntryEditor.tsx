@@ -45,6 +45,12 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
             case 'number':
               initialFields[field.api_identifier] = 0;
               break;
+            case 'button':
+              initialFields[field.api_identifier] = { text: '', url: '', target: '_self' };
+              break;
+            case 'array':
+              initialFields[field.api_identifier] = [];
+              break;
             default:
               initialFields[field.api_identifier] = '';
           }

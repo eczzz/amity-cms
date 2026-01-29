@@ -8,6 +8,8 @@ import {
   faCalendar,
   faImage,
   faLink,
+  faHandPointer,
+  faList,
 } from '@fortawesome/free-solid-svg-icons';
 import { FieldType } from '../../types';
 
@@ -26,56 +28,68 @@ const FIELD_TYPES: Array<{
   {
     type: 'short_text',
     label: 'Short Text',
-    description: 'Single line text input',
+    description: 'Single line text for titles, names, and short values',
     icon: faFont,
   },
   {
     type: 'long_text',
     label: 'Long Text',
-    description: 'Multi-line text area',
+    description: 'Multi-line text for descriptions and prose',
     icon: faAlignLeft,
   },
   {
     type: 'rich_text',
     label: 'Rich Text',
-    description: 'WYSIWYG editor',
+    description: 'Formatted text with bold, italic, links, and headings',
     icon: faParagraph,
   },
   {
     type: 'number',
     label: 'Number',
-    description: 'Numeric input',
+    description: 'Numeric values for quantities, prices, and counts',
     icon: faHashtag,
   },
   {
     type: 'boolean',
     label: 'Boolean',
-    description: 'True/false checkbox',
+    description: 'On/off toggle for flags and feature switches',
     icon: faToggleOn,
   },
   {
     type: 'date',
     label: 'Date',
-    description: 'Date picker',
+    description: 'Calendar date picker for schedules and timestamps',
     icon: faCalendar,
   },
   {
     type: 'media',
     label: 'Media',
-    description: 'Image or file',
+    description: 'Image or file — upload or paste a URL. Outputs a URL string.',
     icon: faImage,
   },
   {
     type: 'reference',
     label: 'Reference',
-    description: 'Link to another entry',
+    description: 'Link to an entry in another content model',
     icon: faLink,
+  },
+  {
+    type: 'button',
+    label: 'Button',
+    description: 'Call-to-action with label, URL, and open behavior',
+    icon: faHandPointer,
+  },
+  {
+    type: 'array',
+    label: 'Array',
+    description: 'Repeatable list of structured items with configurable fields',
+    icon: faList,
   },
 ];
 
 export function FieldTypeSelector({ value, onChange, disabled }: FieldTypeSelectorProps) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
       {FIELD_TYPES.map((fieldType) => (
         <button
           key={fieldType.type}

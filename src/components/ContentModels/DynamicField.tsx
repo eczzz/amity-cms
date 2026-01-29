@@ -2,6 +2,8 @@ import { FieldDefinition } from '../../types';
 import { RichTextEditor } from './RichTextEditor';
 import { MediaPicker } from './MediaPicker';
 import { ReferencePicker } from './ReferencePicker';
+import { ButtonField } from './ButtonField';
+import { ArrayField } from './ArrayField';
 
 interface DynamicFieldProps {
   field: FieldDefinition;
@@ -100,6 +102,23 @@ export function DynamicField({ field, value, onChange, error }: DynamicFieldProp
             value={value}
             onChange={onChange}
             required={field.required}
+          />
+        );
+
+      case 'button':
+        return (
+          <ButtonField
+            value={value || { text: '', url: '', target: '_self' }}
+            onChange={onChange}
+          />
+        );
+
+      case 'array':
+        return (
+          <ArrayField
+            itemFields={field.options?.item_fields || []}
+            value={Array.isArray(value) ? value : []}
+            onChange={onChange}
           />
         );
 

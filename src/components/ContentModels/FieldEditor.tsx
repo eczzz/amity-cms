@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faSave } from '@fortawesome/free-solid-svg-icons';
-import { FieldDefinition, FieldType } from '../../types';
+import { FieldDefinition, FieldType, ArrayItemField } from '../../types';
 import { FieldTypeSelector } from './FieldTypeSelector';
+import { ArrayItemFieldEditor } from './ArrayItemFieldEditor';
 
 interface FieldEditorProps {
   field: FieldDefinition | null;
@@ -26,6 +27,7 @@ export function FieldEditor({ field, existingFields, onSave, onClose }: FieldEdi
   const [pattern, setPattern] = useState('');
   const [defaultValue, setDefaultValue] = useState('');
   const [referenceTo, setReferenceTo] = useState('');
+  const [itemFields, setItemFields] = useState<ArrayItemField[]>([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -44,6 +46,7 @@ export function FieldEditor({ field, existingFields, onSave, onClose }: FieldEdi
       setPattern(field.validation?.pattern || '');
       setDefaultValue(field.default_value?.toString() || '');
       setReferenceTo(field.reference_to || '');
+      setItemFields(field.options?.item_fields || []);
     }
   }, [field]);
 
@@ -92,6 +95,19 @@ export function FieldEditor({ field, existingFields, onSave, onClose }: FieldEdi
       return;
     }
 
+    if (fieldType === 'array') {
+      if (itemFields.length === 0) {
+        setError('Array fields must have at least one item field defined');
+        return;
+      }
+      const hasEmptyName = itemFields.some((f) => !f.name.trim());
+      const hasEmptyId = itemFields.some((f) => !f.api_identifier.trim());
+      if (hasEmptyName || hasEmptyId) {
+        setError('All item fields must have a name and API identifier');
+        return;
+      }
+    }
+
     // Build field definition
     const fieldDef: FieldDefinition = {
       id: field?.id || `field_${Date.now()}`,
@@ -123,6 +139,9 @@ export function FieldEditor({ field, existingFields, onSave, onClose }: FieldEdi
     if (fieldType === 'long_text' || fieldType === 'rich_text') {
       fieldDef.options!.rows = rows;
     }
+    if (fieldType === 'array' && itemFields.length > 0) {
+      fieldDef.options!.item_fields = itemFields;
+    }
 
     // Clean up empty objects
     if (Object.keys(fieldDef.validation!).length === 0) {
@@ -133,6 +152,27 @@ export function FieldEditor({ field, existingFields, onSave, onClose }: FieldEdi
     }
 
     onSave(fieldDef);
+  };
+
+  const renderTypeDocumentation = () => {
+    switch (fieldType) {
+      case 'media':
+        return (
+          <div className="bg-blue-50 border border-blue-200 rounded-md px-4 py-3 text-tiny text-blue-800">
+            Accepts an image upload from your media library or an external URL. The stored value is always a URL string — no UUID resolution needed. Frontend receives a direct URL to the file.
+          </div>
+        );
+      case 'button':
+        return (
+          <div className="bg-blue-50 border border-blue-200 rounded-md px-4 py-3 text-tiny text-blue-800">
+            Stores a link with three parts: display text, destination URL, and target (<code className="bg-blue-100 px-1 rounded">_self</code> for same tab, <code className="bg-blue-100 px-1 rounded">_blank</code> for new tab). Frontend receives <code className="bg-blue-100 px-1 rounded">{'{ text, url, target }'}</code>.
+          </div>
+        );
+      case 'array':
+        return null; // Documentation is shown inside ArrayItemFieldEditor
+      default:
+        return null;
+    }
   };
 
   return (
@@ -180,6 +220,9 @@ export function FieldEditor({ field, existingFields, onSave, onClose }: FieldEdi
               </p>
             )}
           </div>
+
+          {/* Type-specific documentation */}
+          {renderTypeDocumentation()}
 
           {/* Basic Info */}
           <div>
@@ -350,6 +393,13 @@ export function FieldEditor({ field, existingFields, onSave, onClose }: FieldEdi
                 API identifier of the model to reference
               </p>
             </div>
+          )}
+
+          {fieldType === 'array' && (
+            <ArrayItemFieldEditor
+              itemFields={itemFields}
+              onChange={setItemFields}
+            />
           )}
         </div>
 

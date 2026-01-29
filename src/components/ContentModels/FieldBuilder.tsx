@@ -19,6 +19,8 @@ const FIELD_TYPE_LABELS: Record<FieldType, string> = {
   date: 'Date',
   media: 'Media',
   reference: 'Reference',
+  button: 'Button',
+  array: 'Array',
 };
 
 export function FieldBuilder({ fields, onChange }: FieldBuilderProps) {

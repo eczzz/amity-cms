@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSetup } from '../SetupContext';
-import { supabase } from '../../../lib/supabase';
+import { createSupabaseClient } from '../../../lib/supabase';
 
 export function SupabaseStep() {
   const { state, updateSupabase, nextStep, prevStep } = useSetup();
@@ -14,8 +14,8 @@ export function SupabaseStep() {
     setErrorMessage('');
 
     try {
-      // Test connection by querying the settings table
-      const { error } = await supabase.from('settings').select('key').limit(1);
+      const client = createSupabaseClient(state.supabase.url, state.supabase.anonKey);
+      const { error } = await client.from('settings').select('key').limit(1);
 
       if (error) {
         throw new Error(error.message);

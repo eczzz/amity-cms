@@ -11,7 +11,7 @@ import {
   faArchive,
 } from '@fortawesome/free-solid-svg-icons';
 import { ContentModel, ContentEntry } from '../../types';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { JsonViewer } from './JsonViewer';
 import { resolveMediaFieldsForEntries } from '../../lib/contentHelpers';
 
@@ -36,7 +36,7 @@ export function ContentEntriesList({ model, onBack, onEditEntry }: ContentEntrie
   const loadEntries = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('content_entries')
         .select('*')
         .eq('content_model_id', model.id)
@@ -57,7 +57,7 @@ export function ContentEntriesList({ model, onBack, onEditEntry }: ContentEntrie
     }
 
     try {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('content_entries')
         .delete()
         .eq('id', id);

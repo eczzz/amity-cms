@@ -1,5 +1,5 @@
 import { ContentEntry, ContentModel, FieldDefinition } from '../types';
-import { supabase } from './supabase';
+import { getSupabase } from './supabase';
 
 /**
  * Resolves media field UUIDs to full URLs in a content entry
@@ -27,7 +27,7 @@ export async function resolveMediaFields(
   }
 
   // Fetch all media records in one query
-  const { data: mediaRecords, error } = await supabase
+  const { data: mediaRecords, error } = await getSupabase()
     .from('media')
     .select('id, url')
     .in('id', mediaIds);

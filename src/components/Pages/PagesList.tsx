@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faPencilAlt, faTrash, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { Page } from '../../types';
 
 interface PagesListProps {
@@ -18,7 +18,7 @@ export function PagesList({ onEdit }: PagesListProps) {
 
   const loadPages = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('pages')
         .select('*')
         .order('created_at', { ascending: false });
@@ -36,7 +36,7 @@ export function PagesList({ onEdit }: PagesListProps) {
     if (!confirm('Are you sure you want to delete this page?')) return;
 
     try {
-      const { error } = await supabase.from('pages').delete().eq('id', id);
+      const { error } = await getSupabase().from('pages').delete().eq('id', id);
       if (error) throw error;
       setPages(pages.filter((p) => p.id !== id));
     } catch (error) {

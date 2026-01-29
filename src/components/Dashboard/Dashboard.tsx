@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt, faNewspaper, faImages, faChartLine } from '@fortawesome/free-solid-svg-icons';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 
 interface Stats {
   pages: number;
@@ -28,11 +28,11 @@ export function Dashboard() {
   const loadStats = async () => {
     try {
       const [pagesResult, postsResult, mediaResult, publishedPagesResult, publishedPostsResult] = await Promise.all([
-        supabase.from('pages').select('id', { count: 'exact', head: true }),
-        supabase.from('posts').select('id', { count: 'exact', head: true }),
-        supabase.from('media').select('id', { count: 'exact', head: true }),
-        supabase.from('pages').select('id', { count: 'exact', head: true }).eq('status', 'published'),
-        supabase.from('posts').select('id', { count: 'exact', head: true }).eq('status', 'published'),
+        getSupabase().from('pages').select('id', { count: 'exact', head: true }),
+        getSupabase().from('posts').select('id', { count: 'exact', head: true }),
+        getSupabase().from('media').select('id', { count: 'exact', head: true }),
+        getSupabase().from('pages').select('id', { count: 'exact', head: true }).eq('status', 'published'),
+        getSupabase().from('posts').select('id', { count: 'exact', head: true }).eq('status', 'published'),
       ]);
 
       setStats({

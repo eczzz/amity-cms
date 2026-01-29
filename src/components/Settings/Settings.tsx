@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faUser, faLock, faUsers } from '@fortawesome/free-solid-svg-icons';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { Setting } from '../../types';
 import { ChangePassword } from './ChangePassword';
 import { UserManagement } from './UserManagement';
@@ -24,7 +24,7 @@ export function Settings() {
 
   const loadSettings = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('settings')
         .select('*');
 
@@ -58,7 +58,7 @@ export function Settings() {
       }));
 
       for (const update of updates) {
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('settings')
           .update({ value: update.value, updated_at: update.updated_at })
           .eq('key', update.key);

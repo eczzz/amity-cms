@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { getSupabase } from './supabase';
 import { generateUniqueFilename } from './fileValidation';
 
 export interface PresignedUrlResponse {
@@ -20,7 +20,7 @@ export async function requestPresignedUrl(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+      Authorization: `Bearer ${(await getSupabase().auth.getSession()).data.session?.access_token}`,
     },
     body: JSON.stringify({
       filename: uniqueFilename,
@@ -87,7 +87,7 @@ export async function saveMediaMetadata(
   size: number,
   uploadedBy: string
 ): Promise<{ id: string }> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('media')
     .insert({
       filename,
@@ -110,7 +110,7 @@ export async function saveMediaMetadata(
  * Delete media file from Supabase and R2
  */
 export async function deleteMedia(id: string): Promise<void> {
-  const { error: fetchError } = await supabase
+  const { error: fetchError } = await getSupabase()
     .from('media')
     .select('filename')
     .eq('id', id)
@@ -121,7 +121,7 @@ export async function deleteMedia(id: string): Promise<void> {
   }
 
   // Delete from database
-  const { error: deleteError } = await supabase.from('media').delete().eq('id', id);
+  const { error: deleteError } = await getSupabase().from('media').delete().eq('id', id);
 
   if (deleteError) {
     throw deleteError;

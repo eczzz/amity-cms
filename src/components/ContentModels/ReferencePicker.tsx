@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ContentEntry } from '../../types';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 
 interface ReferencePickerProps {
   modelApiIdentifier: string;
@@ -22,7 +22,7 @@ export function ReferencePicker({ modelApiIdentifier, value, onChange, required 
       setLoading(true);
 
       // First, get the model ID from the API identifier
-      const { data: models, error: modelError } = await supabase
+      const { data: models, error: modelError } = await getSupabase()
         .from('content_models')
         .select('id')
         .eq('api_identifier', modelApiIdentifier)
@@ -32,7 +32,7 @@ export function ReferencePicker({ modelApiIdentifier, value, onChange, required 
 
       if (models) {
         // Then get entries for that model
-        const { data: entriesData, error: entriesError } = await supabase
+        const { data: entriesData, error: entriesError } = await getSupabase()
           .from('content_entries')
           .select('*')
           .eq('content_model_id', models.id)

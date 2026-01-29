@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSetup } from '../SetupContext';
-import { supabase } from '../../../lib/supabase';
+import { createSupabaseClient } from '../../../lib/supabase';
 
 export function AdminStep() {
   const { state, updateAdmin, nextStep, prevStep } = useSetup();
@@ -22,7 +22,8 @@ export function AdminStep() {
     setError('');
 
     try {
-      const { data, error: fnError } = await supabase.functions.invoke('setup-admin-user', {
+      const client = createSupabaseClient(state.supabase.url, state.supabase.anonKey);
+      const { data, error: fnError } = await client.functions.invoke('setup-admin-user', {
         body: {
           email: state.admin.email,
           password: state.admin.password,

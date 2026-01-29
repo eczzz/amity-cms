@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSave } from '@fortawesome/free-solid-svg-icons';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { Post } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -75,14 +75,14 @@ export function PostEditor({ post, onBack, onSave }: PostEditorProps) {
       };
 
       if (post) {
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('posts')
           .update(postData)
           .eq('id', post.id);
 
         if (error) throw error;
       } else {
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('posts')
           .insert({
             ...postData,

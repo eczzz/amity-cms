@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSave } from '@fortawesome/free-solid-svg-icons';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { Page } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -69,14 +69,14 @@ export function PageEditor({ page, onBack, onSave }: PageEditorProps) {
       };
 
       if (page) {
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('pages')
           .update(pageData)
           .eq('id', page.id);
 
         if (error) throw error;
       } else {
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('pages')
           .insert({
             ...pageData,

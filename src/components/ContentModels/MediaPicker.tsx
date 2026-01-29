@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faImage, faTimes, faCheck, faUpload, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { Media } from '../../types';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { requestPresignedUrl, uploadToR2, saveMediaMetadata } from '../../lib/r2';
 import { validateFile } from '../../lib/fileValidation';
 import { useAuth } from '../../contexts/AuthContext';
@@ -40,7 +40,7 @@ export function MediaPicker({ value, onChange }: MediaPickerProps) {
 
       // If not, fetch it directly
       try {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
           .from('media')
           .select('*')
           .eq('id', value)
@@ -60,7 +60,7 @@ export function MediaPicker({ value, onChange }: MediaPickerProps) {
   const loadMedia = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('media')
         .select('*')
         .order('created_at', { ascending: false });
@@ -129,7 +129,7 @@ export function MediaPicker({ value, onChange }: MediaPickerProps) {
       await loadMedia();
 
       // Find and select the newly uploaded file
-      const { data: newMediaData } = await supabase
+      const { data: newMediaData } = await getSupabase()
         .from('media')
         .select('*')
         .eq('id', id)

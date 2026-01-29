@@ -1,12 +1,13 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { CMSConfig, BrandingConfig, loadConfig, saveBrandingConfig, markSetupComplete, applyBrandingColors, applyBrandingMeta } from '../lib/config';
 
 interface ConfigContextType {
   config: CMSConfig;
   loading: boolean;
   error: string | null;
-  updateBranding: (branding: BrandingConfig) => Promise<boolean>;
-  completeSetup: () => Promise<boolean>;
+  updateBranding: (branding: BrandingConfig, client?: SupabaseClient) => Promise<boolean>;
+  completeSetup: (client?: SupabaseClient) => Promise<boolean>;
   refreshConfig: () => Promise<void>;
 }
 
@@ -58,8 +59,8 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
     fetchConfig();
   }, []);
 
-  const updateBranding = async (branding: BrandingConfig): Promise<boolean> => {
-    const success = await saveBrandingConfig(branding);
+  const updateBranding = async (branding: BrandingConfig, client?: SupabaseClient): Promise<boolean> => {
+    const success = await saveBrandingConfig(branding, client);
     if (success) {
       setConfig((prev) => ({ ...prev, branding }));
       applyBrandingColors(branding);
@@ -68,8 +69,8 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
     return success;
   };
 
-  const completeSetup = async (): Promise<boolean> => {
-    const success = await markSetupComplete();
+  const completeSetup = async (client?: SupabaseClient): Promise<boolean> => {
+    const success = await markSetupComplete(client);
     if (success) {
       setConfig((prev) => ({ ...prev, setupComplete: true }));
     }

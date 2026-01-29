@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faCubes, faPencilAlt, faTrash, faCode } from '@fortawesome/free-solid-svg-icons';
 import { ContentModel } from '../../types';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { SchemaViewer } from './SchemaViewer';
 
@@ -24,7 +24,7 @@ export function ContentModelsList({ onEdit, onViewEntries }: ContentModelsListPr
   const loadModels = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('content_models')
         .select('*')
         .order('created_at', { ascending: false });
@@ -44,7 +44,7 @@ export function ContentModelsList({ onEdit, onViewEntries }: ContentModelsListPr
     }
 
     try {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('content_models')
         .delete()
         .eq('id', id);

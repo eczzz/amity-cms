@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { User } from '../../types';
 
 interface UserEditorProps {
@@ -51,7 +51,7 @@ export function UserEditor({ user, isOpen, onClose, onSave }: UserEditorProps) {
 
     try {
       if (user) {
-        const { error: updateError } = await supabase
+        const { error: updateError } = await getSupabase()
           .from('users')
           .update({
             first_name: firstName,
@@ -65,7 +65,7 @@ export function UserEditor({ user, isOpen, onClose, onSave }: UserEditorProps) {
         if (updateError) throw updateError;
 
         if (newPassword) {
-          const { error: passwordError } = await supabase.auth.admin.updateUserById(user.id, {
+          const { error: passwordError } = await getSupabase().auth.admin.updateUserById(user.id, {
             password: newPassword,
           });
 
@@ -79,7 +79,7 @@ export function UserEditor({ user, isOpen, onClose, onSave }: UserEditorProps) {
         }
 
         // Create auth user with metadata (trigger auto-creates public.users record)
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        const { data: signUpData, error: signUpError } = await getSupabase().auth.signUp({
           email,
           password: newPassword,
           options: {
@@ -97,7 +97,7 @@ export function UserEditor({ user, isOpen, onClose, onSave }: UserEditorProps) {
           // Wait briefly for trigger to create record, then update with full details
           await new Promise(resolve => setTimeout(resolve, 500));
 
-          const { error: updateError } = await supabase
+          const { error: updateError } = await getSupabase()
             .from('users')
             .update({
               first_name: firstName,
@@ -128,9 +128,9 @@ export function UserEditor({ user, isOpen, onClose, onSave }: UserEditorProps) {
     setError('');
 
     try {
-      await supabase.auth.admin.deleteUser(user.id);
+      await getSupabase().auth.admin.deleteUser(user.id);
 
-      const { error: deleteError } = await supabase
+      const { error: deleteError } = await getSupabase()
         .from('users')
         .delete()
         .eq('id', user.id);

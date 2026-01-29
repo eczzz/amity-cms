@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { Media } from '../../types';
 import { MediaCard } from './MediaCard';
 import { MediaUpload } from './MediaUpload';
@@ -25,7 +25,7 @@ export function MediaLibrary() {
   const loadMedia = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('media')
         .select('*')
         .order('created_at', { ascending: false });

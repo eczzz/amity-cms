@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSave, faEdit, faCode } from '@fortawesome/free-solid-svg-icons';
 import { ContentModel, ContentEntry } from '../../types';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { DynamicField } from './DynamicField';
 import { validateAllFields } from './FieldValidation';
@@ -98,7 +98,7 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
 
       if (entry) {
         // Update existing entry
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('content_entries')
           .update(entryData)
           .eq('id', entry.id);
@@ -112,7 +112,7 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
         onSave?.();
       } else {
         // Create new entry
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('content_entries')
           .insert([entryData]);
 

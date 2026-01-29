@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSave } from '@fortawesome/free-solid-svg-icons';
 import { ContentModel, FieldDefinition } from '../../types';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { FieldBuilder } from './FieldBuilder';
 import { Toast } from '../Common/Toast';
@@ -94,7 +94,7 @@ export function ContentModelEditor({ model, onBack, onSave }: ContentModelEditor
 
       if (model) {
         // Update existing model
-        const { error: updateError } = await supabase
+        const { error: updateError } = await getSupabase()
           .from('content_models')
           .update(modelData)
           .eq('id', model.id);
@@ -107,7 +107,7 @@ export function ContentModelEditor({ model, onBack, onSave }: ContentModelEditor
         });
       } else {
         // Create new model
-        const { error: insertError } = await supabase
+        const { error: insertError } = await getSupabase()
           .from('content_models')
           .insert({
             ...modelData,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faPencilAlt, faTrash, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { Post } from '../../types';
 
 interface PostsListProps {
@@ -18,7 +18,7 @@ export function PostsList({ onEdit }: PostsListProps) {
 
   const loadPosts = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('posts')
         .select('*')
         .order('created_at', { ascending: false });
@@ -36,7 +36,7 @@ export function PostsList({ onEdit }: PostsListProps) {
     if (!confirm('Are you sure you want to delete this post?')) return;
 
     try {
-      const { error } = await supabase.from('posts').delete().eq('id', id);
+      const { error } = await getSupabase().from('posts').delete().eq('id', id);
       if (error) throw error;
       setPosts(posts.filter((p) => p.id !== id));
     } catch (error) {

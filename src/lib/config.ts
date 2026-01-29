@@ -1,3 +1,4 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 
 export interface BrandingConfig {
@@ -43,6 +44,10 @@ const SETTINGS_KEYS = {
 };
 
 export async function loadConfig(): Promise<CMSConfig> {
+  if (!supabase) {
+    return DEFAULT_CONFIG;
+  }
+
   try {
     const { data: settings, error } = await supabase
       .from('settings')
@@ -75,9 +80,12 @@ export async function loadConfig(): Promise<CMSConfig> {
   }
 }
 
-export async function saveConfigValue(key: string, value: string): Promise<boolean> {
+export async function saveConfigValue(key: string, value: string, client?: SupabaseClient): Promise<boolean> {
+  const db = client || supabase;
+  if (!db) return false;
+
   try {
-    const { error } = await supabase
+    const { error } = await db
       .from('settings')
       .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' });
 
@@ -92,7 +100,10 @@ export async function saveConfigValue(key: string, value: string): Promise<boole
   }
 }
 
-export async function saveBrandingConfig(branding: BrandingConfig): Promise<boolean> {
+export async function saveBrandingConfig(branding: BrandingConfig, client?: SupabaseClient): Promise<boolean> {
+  const db = client || supabase;
+  if (!db) return false;
+
   const updates = [
     { key: SETTINGS_KEYS.businessName, value: branding.businessName },
     { key: SETTINGS_KEYS.logoUrl, value: branding.logoUrl },
@@ -105,7 +116,7 @@ export async function saveBrandingConfig(branding: BrandingConfig): Promise<bool
   ];
 
   try {
-    const { error } = await supabase
+    const { error } = await db
       .from('settings')
       .upsert(
         updates.map((u) => ({ ...u, updated_at: new Date().toISOString() })),
@@ -123,8 +134,8 @@ export async function saveBrandingConfig(branding: BrandingConfig): Promise<bool
   }
 }
 
-export async function markSetupComplete(): Promise<boolean> {
-  return saveConfigValue(SETTINGS_KEYS.setupComplete, 'true');
+export async function markSetupComplete(client?: SupabaseClient): Promise<boolean> {
+  return saveConfigValue(SETTINGS_KEYS.setupComplete, 'true', client);
 }
 
 export function applyBrandingColors(branding: BrandingConfig): void {

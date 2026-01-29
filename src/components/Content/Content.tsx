@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faChevronDown, faPencilAlt, faTrash, faCode, faEye, faEyeSlash, faArchive } from '@fortawesome/free-solid-svg-icons';
 import { ContentModel, ContentEntry } from '../../types';
-import { supabase } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { JsonViewer } from '../ContentModels/JsonViewer';
 import { ContentEntryEditor } from '../ContentModels/ContentEntryEditor';
 
@@ -27,7 +27,7 @@ export function Content() {
       setLoading(true);
 
       // Fetch all models
-      const { data: modelsData, error: modelsError } = await supabase
+      const { data: modelsData, error: modelsError } = await getSupabase()
         .from('content_models')
         .select('*')
         .order('created_at', { ascending: false });
@@ -36,7 +36,7 @@ export function Content() {
       setModels(modelsData || []);
 
       // Fetch all entries
-      const { data: entriesData, error: entriesError } = await supabase
+      const { data: entriesData, error: entriesError } = await getSupabase()
         .from('content_entries')
         .select('*')
         .order('updated_at', { ascending: false });
@@ -66,7 +66,7 @@ export function Content() {
     if (!deletingEntryId) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('content_entries')
         .delete()
         .eq('id', deletingEntryId);

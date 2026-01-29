@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSetup } from '../SetupContext';
 import { useConfig } from '../../../contexts/ConfigContext';
+import { createSupabaseClient } from '../../../lib/supabase';
 
 export function CompleteStep() {
   const { state } = useSetup();
@@ -14,14 +15,16 @@ export function CompleteStep() {
     setError('');
 
     try {
+      const client = createSupabaseClient(state.supabase.url, state.supabase.anonKey);
+
       // Save branding configuration
-      const brandingSuccess = await updateBranding(state.branding);
+      const brandingSuccess = await updateBranding(state.branding, client);
       if (!brandingSuccess) {
         throw new Error('Failed to save branding configuration');
       }
 
       // Mark setup as complete
-      const completeSuccess = await completeSetup();
+      const completeSuccess = await completeSetup(client);
       if (!completeSuccess) {
         throw new Error('Failed to mark setup as complete');
       }

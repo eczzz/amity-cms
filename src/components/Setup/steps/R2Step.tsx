@@ -6,6 +6,7 @@ export function R2Step() {
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<'success' | 'error' | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [copied, setCopied] = useState(false);
 
   const testR2 = async () => {
     setTesting(true);
@@ -141,16 +142,30 @@ export function R2Step() {
         </div>
       </div>
 
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-        <h4 className="font-medium text-text-primary mb-2">Required Environment Variables</h4>
-        <div className="text-tiny font-mono text-text-muted space-y-1">
-          <p>VITE_R2_ACCOUNT_ID=your-account-id</p>
-          <p>VITE_R2_BUCKET_NAME=your-bucket-name</p>
-          <p>VITE_R2_PUBLIC_URL=https://your-domain.com</p>
-          <p>R2_ACCESS_KEY_ID=your-access-key</p>
-          <p>R2_SECRET_ACCESS_KEY=your-secret-key</p>
+      {state.r2.accountId && state.r2.bucketName && state.r2.publicUrl && (
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="font-medium text-gray-800 text-small">Add to your .env file</h4>
+            <button
+              onClick={() => {
+                const snippet = `VITE_R2_ACCOUNT_ID=${state.r2.accountId}\nVITE_R2_BUCKET_NAME=${state.r2.bucketName}\nVITE_R2_PUBLIC_URL=${state.r2.publicUrl}`;
+                navigator.clipboard.writeText(snippet);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              className="text-tiny px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 text-gray-600"
+            >
+              {copied ? 'Copied!' : 'Copy'}
+            </button>
+          </div>
+          <pre className="bg-gray-900 text-gray-100 rounded p-3 text-tiny overflow-x-auto">
+            <code>{`VITE_R2_ACCOUNT_ID=${state.r2.accountId}\nVITE_R2_BUCKET_NAME=${state.r2.bucketName}\nVITE_R2_PUBLIC_URL=${state.r2.publicUrl}`}</code>
+          </pre>
+          <p className="text-tiny text-gray-500 mt-2">
+            Paste this into your <code className="bg-gray-100 px-1 rounded">.env</code> file, then restart the dev server for changes to take effect.
+          </p>
         </div>
-      </div>
+      )}
 
       <div className="flex justify-between">
         <button

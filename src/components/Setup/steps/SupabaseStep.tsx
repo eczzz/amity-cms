@@ -7,6 +7,7 @@ export function SupabaseStep() {
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<'success' | 'error' | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [copied, setCopied] = useState(false);
 
   const testConnection = async () => {
     setTesting(true);
@@ -15,7 +16,9 @@ export function SupabaseStep() {
 
     try {
       const client = createSupabaseClient(state.supabase.url, state.supabase.anonKey);
-      const { error } = await client.from('settings').select('key').limit(1);
+      // Use auth.getSession() to test connectivity — works on fresh projects
+      // without requiring any database tables to exist
+      const { error } = await client.auth.getSession();
 
       if (error) {
         throw new Error(error.message);
@@ -30,6 +33,14 @@ export function SupabaseStep() {
     } finally {
       setTesting(false);
     }
+  };
+
+  const envSnippet = `VITE_SUPABASE_URL=${state.supabase.url}\nVITE_SUPABASE_ANON_KEY=${state.supabase.anonKey}`;
+
+  const copyEnvSnippet = () => {
+    navigator.clipboard.writeText(envSnippet);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleNext = () => {
@@ -107,6 +118,26 @@ export function SupabaseStep() {
           )}
         </div>
       </div>
+
+      {state.supabase.url && state.supabase.anonKey && (
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="font-medium text-gray-800 text-small">Add to your .env file</h4>
+            <button
+              onClick={copyEnvSnippet}
+              className="text-tiny px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 text-gray-600"
+            >
+              {copied ? 'Copied!' : 'Copy'}
+            </button>
+          </div>
+          <pre className="bg-gray-900 text-gray-100 rounded p-3 text-tiny overflow-x-auto">
+            <code>{envSnippet}</code>
+          </pre>
+          <p className="text-tiny text-gray-500 mt-2">
+            Paste this into your <code className="bg-gray-100 px-1 rounded">.env</code> file, then restart the dev server for changes to take effect.
+          </p>
+        </div>
+      )}
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h4 className="font-medium text-blue-800 mb-2">Database Schema Setup</h4>

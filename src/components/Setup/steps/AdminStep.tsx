@@ -23,21 +23,20 @@ export function AdminStep() {
 
     try {
       const client = createSupabaseClient(state.supabase.url, state.supabase.anonKey);
-      const { data, error: fnError } = await client.functions.invoke('setup-admin-user', {
-        body: {
-          email: state.admin.email,
-          password: state.admin.password,
-          firstName: state.admin.firstName,
-          lastName: state.admin.lastName,
+      const { error: signUpError } = await client.auth.signUp({
+        email: state.admin.email,
+        password: state.admin.password,
+        options: {
+          data: {
+            first_name: state.admin.firstName,
+            last_name: state.admin.lastName,
+            role: 'admin',
+          },
         },
       });
 
-      if (fnError) {
-        throw fnError;
-      }
-
-      if (data?.error) {
-        throw new Error(data.error);
+      if (signUpError) {
+        throw signUpError;
       }
 
       updateAdmin({ created: true });

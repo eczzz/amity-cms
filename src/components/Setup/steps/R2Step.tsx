@@ -42,7 +42,7 @@ export function R2Step() {
 
   const handleNext = () => {
     // Allow skipping R2 test if values are filled
-    if (state.r2.accountId && state.r2.bucketName && state.r2.publicUrl) {
+    if (state.r2.accountId && state.r2.bucketName && state.r2.publicUrl && state.r2.accessKeyId && state.r2.secretAccessKey) {
       updateR2({ configured: true });
       nextStep();
     }
@@ -113,6 +113,35 @@ export function R2Step() {
           </p>
         </div>
 
+        <div>
+          <label className="block text-small font-medium text-text-primary mb-2">
+            R2 Access Key ID
+          </label>
+          <input
+            type="password"
+            value={state.r2.accessKeyId}
+            onChange={(e) => updateR2({ accessKeyId: e.target.value, configured: false })}
+            className="w-full px-4 py-2 text-small border border-gray-300 rounded-md"
+            placeholder="Your R2 API access key ID"
+          />
+          <p className="text-tiny text-text-muted mt-1">
+            Generate at Cloudflare Dashboard &gt; R2 &gt; Manage R2 API Tokens
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-small font-medium text-text-primary mb-2">
+            R2 Secret Access Key
+          </label>
+          <input
+            type="password"
+            value={state.r2.secretAccessKey}
+            onChange={(e) => updateR2({ secretAccessKey: e.target.value, configured: false })}
+            className="w-full px-4 py-2 text-small border border-gray-300 rounded-md"
+            placeholder="Your R2 API secret access key"
+          />
+        </div>
+
         <div className="flex items-center gap-4">
           <button
             onClick={testR2}
@@ -142,13 +171,13 @@ export function R2Step() {
         </div>
       </div>
 
-      {state.r2.accountId && state.r2.bucketName && state.r2.publicUrl && (
+      {state.r2.accountId && state.r2.bucketName && state.r2.publicUrl && state.r2.accessKeyId && state.r2.secretAccessKey && (
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
             <h4 className="font-medium text-gray-800 text-small">Add to your .env file</h4>
             <button
               onClick={() => {
-                const snippet = `VITE_R2_ACCOUNT_ID=${state.r2.accountId}\nVITE_R2_BUCKET_NAME=${state.r2.bucketName}\nVITE_R2_PUBLIC_URL=${state.r2.publicUrl}`;
+                const snippet = `VITE_R2_ACCOUNT_ID=${state.r2.accountId}\nVITE_R2_BUCKET_NAME=${state.r2.bucketName}\nVITE_R2_PUBLIC_URL=${state.r2.publicUrl}\nR2_ACCESS_KEY_ID=${state.r2.accessKeyId}\nR2_SECRET_ACCESS_KEY=${state.r2.secretAccessKey}`;
                 navigator.clipboard.writeText(snippet);
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
@@ -159,10 +188,10 @@ export function R2Step() {
             </button>
           </div>
           <pre className="bg-gray-900 text-gray-100 rounded p-3 text-tiny overflow-x-auto">
-            <code>{`VITE_R2_ACCOUNT_ID=${state.r2.accountId}\nVITE_R2_BUCKET_NAME=${state.r2.bucketName}\nVITE_R2_PUBLIC_URL=${state.r2.publicUrl}`}</code>
+            <code>{`VITE_R2_ACCOUNT_ID=${state.r2.accountId}\nVITE_R2_BUCKET_NAME=${state.r2.bucketName}\nVITE_R2_PUBLIC_URL=${state.r2.publicUrl}\nR2_ACCESS_KEY_ID=${state.r2.accessKeyId}\nR2_SECRET_ACCESS_KEY=${state.r2.secretAccessKey}`}</code>
           </pre>
           <p className="text-tiny text-gray-500 mt-2">
-            Paste this into your <code className="bg-gray-100 px-1 rounded">.env</code> file, then restart the dev server for changes to take effect.
+            Paste this into your <code className="bg-gray-100 px-1 rounded">.env</code> file and add to your Netlify environment variables. Restart the dev server for local changes to take effect.
           </p>
         </div>
       )}
@@ -176,7 +205,7 @@ export function R2Step() {
         </button>
         <button
           onClick={handleNext}
-          disabled={!state.r2.accountId || !state.r2.bucketName || !state.r2.publicUrl}
+          disabled={!state.r2.accountId || !state.r2.bucketName || !state.r2.publicUrl || !state.r2.accessKeyId || !state.r2.secretAccessKey}
           className="btn-primary px-6 py-2 text-small disabled:opacity-50"
         >
           Continue

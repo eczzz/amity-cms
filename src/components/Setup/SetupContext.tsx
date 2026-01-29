@@ -12,6 +12,8 @@ export interface SetupState {
     accountId: string;
     bucketName: string;
     publicUrl: string;
+    accessKeyId: string;
+    secretAccessKey: string;
     configured: boolean;
   };
   branding: BrandingConfig;
@@ -46,6 +48,8 @@ const initialState: SetupState = {
     accountId: import.meta.env.VITE_R2_ACCOUNT_ID || '',
     bucketName: import.meta.env.VITE_R2_BUCKET_NAME || '',
     publicUrl: import.meta.env.VITE_R2_PUBLIC_URL || '',
+    accessKeyId: '',
+    secretAccessKey: '',
     configured: false,
   },
   branding: {

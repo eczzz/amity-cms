@@ -343,6 +343,7 @@ CREATE POLICY "Authenticated users can view settings"
 CREATE POLICY "Authenticated users can update settings"
   ON settings FOR UPDATE
   TO authenticated
+  USING (true)
   WITH CHECK (true);
 
 CREATE POLICY "Authenticated users can insert settings"

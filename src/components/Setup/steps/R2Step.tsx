@@ -15,9 +15,13 @@ export function R2Step() {
 
     try {
       // Test by requesting a presigned URL
+      // The function requires a Bearer token — use the Supabase anon key
       const response = await fetch('/api/generate-presigned-url', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${state.supabase.anonKey}`,
+        },
         body: JSON.stringify({
           filename: 'test-connection.txt',
           contentType: 'text/plain',

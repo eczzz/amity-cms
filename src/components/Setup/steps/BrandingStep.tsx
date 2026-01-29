@@ -5,15 +5,17 @@ import { requestPresignedUrl, uploadToR2 } from '../../../lib/r2';
 export function BrandingStep() {
   const { state, updateBranding, nextStep, prevStep } = useSetup();
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingCollapsedLogo, setUploadingCollapsedLogo] = useState(false);
   const [uploadingFavicon, setUploadingFavicon] = useState(false);
   const [uploadingBg, setUploadingBg] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const collapsedLogoInputRef = useRef<HTMLInputElement>(null);
   const faviconInputRef = useRef<HTMLInputElement>(null);
   const bgInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async (
     file: File,
-    type: 'logo' | 'favicon' | 'background',
+    type: 'logo' | 'collapsedLogo' | 'favicon' | 'background',
     setUploading: (v: boolean) => void
   ) => {
     setUploading(true);
@@ -25,6 +27,9 @@ export function BrandingStep() {
       switch (type) {
         case 'logo':
           updateBranding({ logoUrl: publicUrl });
+          break;
+        case 'collapsedLogo':
+          updateBranding({ collapsedLogoUrl: publicUrl });
           break;
         case 'favicon':
           updateBranding({ faviconUrl: publicUrl });
@@ -69,7 +74,7 @@ export function BrandingStep() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <div>
             <label className="block text-small font-medium text-text-primary mb-2">
               Logo
@@ -97,9 +102,43 @@ export function BrandingStep() {
               ) : uploadingLogo ? (
                 <p className="text-small text-text-muted">Uploading...</p>
               ) : (
-                <p className="text-small text-text-muted">Click to upload logo</p>
+                <p className="text-small text-text-muted">Click to upload</p>
               )}
             </div>
+            <p className="text-tiny text-text-muted mt-1">Expanded sidebar</p>
+          </div>
+
+          <div>
+            <label className="block text-small font-medium text-text-primary mb-2">
+              Collapsed Logo
+            </label>
+            <input
+              ref={collapsedLogoInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFileUpload(file, 'collapsedLogo', setUploadingCollapsedLogo);
+              }}
+            />
+            <div
+              onClick={() => collapsedLogoInputRef.current?.click()}
+              className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-primary transition-colors"
+            >
+              {state.branding.collapsedLogoUrl ? (
+                <img
+                  src={state.branding.collapsedLogoUrl}
+                  alt="Collapsed logo preview"
+                  className="max-h-16 mx-auto"
+                />
+              ) : uploadingCollapsedLogo ? (
+                <p className="text-small text-text-muted">Uploading...</p>
+              ) : (
+                <p className="text-small text-text-muted">Click to upload</p>
+              )}
+            </div>
+            <p className="text-tiny text-text-muted mt-1">Collapsed sidebar</p>
           </div>
 
           <div>
@@ -129,9 +168,10 @@ export function BrandingStep() {
               ) : uploadingFavicon ? (
                 <p className="text-small text-text-muted">Uploading...</p>
               ) : (
-                <p className="text-small text-text-muted">Click to upload favicon</p>
+                <p className="text-small text-text-muted">Click to upload</p>
               )}
             </div>
+            <p className="text-tiny text-text-muted mt-1">Browser tab icon</p>
           </div>
         </div>
 

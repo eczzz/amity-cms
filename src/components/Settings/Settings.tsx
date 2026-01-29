@@ -32,9 +32,11 @@ export function Settings() {
   const [brandingSuccess, setBrandingSuccess] = useState(false);
   const [brandingError, setBrandingError] = useState('');
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingCollapsedLogo, setUploadingCollapsedLogo] = useState(false);
   const [uploadingFavicon, setUploadingFavicon] = useState(false);
   const [uploadingBg, setUploadingBg] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const collapsedLogoInputRef = useRef<HTMLInputElement>(null);
   const faviconInputRef = useRef<HTMLInputElement>(null);
   const bgInputRef = useRef<HTMLInputElement>(null);
 
@@ -112,7 +114,7 @@ export function Settings() {
 
   const handleBrandingFileUpload = async (
     file: File,
-    type: 'logo' | 'favicon' | 'background',
+    type: 'logo' | 'collapsedLogo' | 'favicon' | 'background',
     setUploading: (v: boolean) => void
   ) => {
     setUploading(true);
@@ -124,6 +126,9 @@ export function Settings() {
       switch (type) {
         case 'logo':
           setBrandingForm({ ...current, logoUrl: publicUrl });
+          break;
+        case 'collapsedLogo':
+          setBrandingForm({ ...current, collapsedLogoUrl: publicUrl });
           break;
         case 'favicon':
           setBrandingForm({ ...current, faviconUrl: publicUrl });
@@ -370,8 +375,8 @@ export function Settings() {
                         />
                       </div>
 
-                      {/* Logo & Favicon */}
-                      <div className="grid grid-cols-2 gap-6">
+                      {/* Logo, Collapsed Logo & Favicon */}
+                      <div className="grid grid-cols-3 gap-6">
                         <div>
                           <label className="block text-sm font-semibold text-gray-700 mb-2">Logo</label>
                           <input
@@ -396,6 +401,34 @@ export function Settings() {
                               <p className="text-sm text-gray-500">Click to upload logo</p>
                             )}
                           </div>
+                          <p className="text-xs text-gray-500 mt-1">Shown in expanded sidebar</p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">Collapsed Logo</label>
+                          <input
+                            ref={collapsedLogoInputRef}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleBrandingFileUpload(file, 'collapsedLogo', setUploadingCollapsedLogo);
+                            }}
+                          />
+                          <div
+                            onClick={() => collapsedLogoInputRef.current?.click()}
+                            className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-primary transition-colors"
+                          >
+                            {uploadingCollapsedLogo ? (
+                              <p className="text-sm text-gray-500">Uploading...</p>
+                            ) : form.collapsedLogoUrl ? (
+                              <img src={form.collapsedLogoUrl} alt="Collapsed logo preview" className="max-h-16 mx-auto" />
+                            ) : (
+                              <p className="text-sm text-gray-500">Click to upload</p>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">Shown in collapsed sidebar</p>
                         </div>
 
                         <div>
@@ -422,6 +455,7 @@ export function Settings() {
                               <p className="text-sm text-gray-500">Click to upload favicon</p>
                             )}
                           </div>
+                          <p className="text-xs text-gray-500 mt-1">Browser tab icon</p>
                         </div>
                       </div>
 
@@ -547,7 +581,7 @@ export function Settings() {
                   <div className="flex justify-end pt-2">
                     <button
                       onClick={handleBrandingSave}
-                      disabled={brandingSaving || uploadingLogo || uploadingFavicon || uploadingBg}
+                      disabled={brandingSaving || uploadingLogo || uploadingCollapsedLogo || uploadingFavicon || uploadingBg}
                       className="btn-primary py-2.5 px-6 text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transition-all"
                     >
                       <FontAwesomeIcon icon={faSave} className="w-4 h-4" />

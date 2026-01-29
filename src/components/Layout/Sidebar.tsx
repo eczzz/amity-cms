@@ -39,9 +39,9 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
     >
       <div className="h-20 p-4 border-b border-navy/50 flex items-center justify-center overflow-hidden">
         {isCollapsed ? (
-          branding.faviconUrl ? (
+          branding.collapsedLogoUrl ? (
             <img
-              src={branding.faviconUrl}
+              src={branding.collapsedLogoUrl}
               alt={branding.businessName}
               className="h-10 object-contain"
             />

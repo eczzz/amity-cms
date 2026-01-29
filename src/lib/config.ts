@@ -4,6 +4,7 @@ import { supabase } from './supabase';
 export interface BrandingConfig {
   businessName: string;
   logoUrl: string;
+  collapsedLogoUrl: string;
   faviconUrl: string;
   loginBackgroundUrl: string | null;
   primaryColor: string;
@@ -21,6 +22,7 @@ const DEFAULT_CONFIG: CMSConfig = {
   branding: {
     businessName: 'CMS Admin',
     logoUrl: '',
+    collapsedLogoUrl: '',
     faviconUrl: '',
     loginBackgroundUrl: null,
     primaryColor: '#3b82f6',
@@ -34,6 +36,7 @@ const DEFAULT_CONFIG: CMSConfig = {
 const SETTINGS_KEYS = {
   businessName: 'branding_business_name',
   logoUrl: 'branding_logo_url',
+  collapsedLogoUrl: 'branding_collapsed_logo_url',
   faviconUrl: 'branding_favicon_url',
   loginBackgroundUrl: 'branding_login_bg_url',
   primaryColor: 'branding_primary_color',
@@ -65,6 +68,7 @@ export async function loadConfig(): Promise<CMSConfig> {
       branding: {
         businessName: settingsMap.get(SETTINGS_KEYS.businessName) || DEFAULT_CONFIG.branding.businessName,
         logoUrl: settingsMap.get(SETTINGS_KEYS.logoUrl) || DEFAULT_CONFIG.branding.logoUrl,
+        collapsedLogoUrl: settingsMap.get(SETTINGS_KEYS.collapsedLogoUrl) || DEFAULT_CONFIG.branding.collapsedLogoUrl,
         faviconUrl: settingsMap.get(SETTINGS_KEYS.faviconUrl) || DEFAULT_CONFIG.branding.faviconUrl,
         loginBackgroundUrl: settingsMap.get(SETTINGS_KEYS.loginBackgroundUrl) || DEFAULT_CONFIG.branding.loginBackgroundUrl,
         primaryColor: settingsMap.get(SETTINGS_KEYS.primaryColor) || DEFAULT_CONFIG.branding.primaryColor,
@@ -107,6 +111,7 @@ export async function saveBrandingConfig(branding: BrandingConfig, client?: Supa
   const updates = [
     { key: SETTINGS_KEYS.businessName, value: branding.businessName },
     { key: SETTINGS_KEYS.logoUrl, value: branding.logoUrl },
+    { key: SETTINGS_KEYS.collapsedLogoUrl, value: branding.collapsedLogoUrl },
     { key: SETTINGS_KEYS.faviconUrl, value: branding.faviconUrl },
     { key: SETTINGS_KEYS.loginBackgroundUrl, value: branding.loginBackgroundUrl || '' },
     { key: SETTINGS_KEYS.primaryColor, value: branding.primaryColor },

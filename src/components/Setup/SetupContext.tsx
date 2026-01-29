@@ -55,6 +55,7 @@ const initialState: SetupState = {
   branding: {
     businessName: '',
     logoUrl: '',
+    collapsedLogoUrl: '',
     faviconUrl: '',
     loginBackgroundUrl: null,
     primaryColor: '#3b82f6',

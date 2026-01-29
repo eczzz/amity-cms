@@ -17,6 +17,16 @@ export function CompleteStep() {
     try {
       const client = createSupabaseClient(state.supabase.url, state.supabase.anonKey);
 
+      // Sign in as the admin user so we have an authenticated session for RLS
+      const { error: signInError } = await client.auth.signInWithPassword({
+        email: state.admin.email,
+        password: state.admin.password,
+      });
+
+      if (signInError) {
+        throw new Error(`Failed to sign in as admin: ${signInError.message}`);
+      }
+
       // Save branding configuration
       const brandingSuccess = await updateBranding(state.branding, client);
       if (!brandingSuccess) {

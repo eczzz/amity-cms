@@ -7,6 +7,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { DynamicField } from './DynamicField';
 import { validateAllFields } from './FieldValidation';
 import { Toast } from '../Common/Toast';
+import { ConfirmationModal } from '../Common/ConfirmationModal';
 
 interface ContentEntryEditorProps {
   model: ContentModel;
@@ -23,7 +24,27 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; title: string; message?: string } | null>(null);
+  const [showBuildModal, setShowBuildModal] = useState(false);
+  const [webhookUrl, setWebhookUrl] = useState('');
+  const [triggering, setTriggering] = useState(false);
   const { user } = useAuth();
+
+  // Fetch webhook URL on mount
+  useEffect(() => {
+    const loadWebhookUrl = async () => {
+      try {
+        const { data } = await getSupabase()
+          .from('settings')
+          .select('value')
+          .eq('key', 'webhook_build_url')
+          .maybeSingle();
+        if (data?.value) setWebhookUrl(data.value);
+      } catch {
+        // Silently ignore — no webhook configured
+      }
+    };
+    loadWebhookUrl();
+  }, []);
 
   useEffect(() => {
     if (entry) {
@@ -115,7 +136,6 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
           title: 'Entry updated',
           message: 'Your changes have been saved successfully',
         });
-        onSave?.();
       } else {
         // Create new entry
         const { error } = await getSupabase()
@@ -128,6 +148,12 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
           title: 'Entry created',
           message: 'Your new entry has been created successfully',
         });
+      }
+
+      // If webhook URL is configured, prompt for build; otherwise proceed normally
+      if (webhookUrl) {
+        setShowBuildModal(true);
+      } else {
         onSave?.();
       }
     } catch (error) {
@@ -140,6 +166,33 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleBuildConfirm = async () => {
+    setTriggering(true);
+    try {
+      await fetch(webhookUrl, { method: 'POST' });
+      setToast({
+        type: 'success',
+        title: 'Build triggered',
+        message: 'Site build has been started',
+      });
+    } catch {
+      setToast({
+        type: 'error',
+        title: 'Build failed',
+        message: 'Failed to trigger the build webhook',
+      });
+    } finally {
+      setTriggering(false);
+      setShowBuildModal(false);
+      onSave?.();
+    }
+  };
+
+  const handleBuildSkip = () => {
+    setShowBuildModal(false);
+    onSave?.();
   };
 
   const generateJsonOutput = () => {
@@ -315,6 +368,17 @@ export function ContentEntryEditor({ model, entry, onBack, onSave }: ContentEntr
           onClose={() => setToast(null)}
         />
       )}
+
+      <ConfirmationModal
+        isOpen={showBuildModal}
+        title="Trigger Site Build?"
+        message="Your changes have been saved. Would you like to trigger a site build to publish these changes?"
+        confirmLabel={triggering ? 'Triggering...' : 'Build Now'}
+        cancelLabel="Skip"
+        onConfirm={handleBuildConfirm}
+        onCancel={handleBuildSkip}
+        variant="info"
+      />
     </div>
   );
 }

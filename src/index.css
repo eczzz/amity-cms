@@ -147,3 +147,136 @@
     transform: translate(-50px, 50px);
   }
 }
+
+/* ─── TipTap Editor Styles ───────────────────────────────────────────────── */
+
+.tiptap-content .tiptap {
+  @apply px-4 py-3 outline-none;
+}
+
+.tiptap-content .tiptap p {
+  @apply text-small leading-relaxed mb-3;
+}
+
+.tiptap-content .tiptap h1 {
+  @apply text-2xl font-bold mb-4 mt-6;
+}
+
+.tiptap-content .tiptap h2 {
+  @apply text-xl font-bold mb-3 mt-5;
+}
+
+.tiptap-content .tiptap h3 {
+  @apply text-lg font-semibold mb-3 mt-4;
+}
+
+.tiptap-content .tiptap h4 {
+  @apply text-base font-semibold mb-2 mt-4;
+}
+
+.tiptap-content .tiptap ul {
+  @apply list-disc pl-6 mb-3;
+}
+
+.tiptap-content .tiptap ol {
+  @apply list-decimal pl-6 mb-3;
+}
+
+.tiptap-content .tiptap li {
+  @apply mb-1;
+}
+
+.tiptap-content .tiptap li p {
+  @apply mb-0;
+}
+
+.tiptap-content .tiptap blockquote {
+  @apply border-l-4 pl-4 italic text-text-muted my-4;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.tiptap-content .tiptap pre {
+  @apply bg-slate-900 text-gray-100 rounded-lg p-4 my-4 font-mono text-small overflow-x-auto;
+}
+
+.tiptap-content .tiptap code {
+  @apply bg-bg-light-gray text-primary px-1.5 py-0.5 rounded text-small font-mono;
+}
+
+.tiptap-content .tiptap pre code {
+  @apply bg-transparent text-inherit p-0 rounded-none;
+}
+
+.tiptap-content .tiptap hr {
+  @apply border-t border-bg-slate my-6;
+}
+
+.tiptap-content .tiptap img {
+  @apply rounded-lg max-w-full h-auto my-4;
+}
+
+.tiptap-content .tiptap a {
+  @apply text-primary underline;
+}
+
+.tiptap-content .tiptap a:hover {
+  opacity: 0.8;
+}
+
+.tiptap-content .tiptap table {
+  @apply border-collapse w-full my-4;
+}
+
+.tiptap-content .tiptap table td,
+.tiptap-content .tiptap table th {
+  @apply border border-bg-slate px-3 py-2 text-small;
+}
+
+.tiptap-content .tiptap table th {
+  @apply bg-bg-light-gray font-semibold text-text-primary;
+}
+
+.tiptap-content .tiptap table td {
+  @apply bg-white;
+}
+
+/* Callout styles */
+.tiptap-content .tiptap div[data-callout] {
+  @apply rounded-lg border-l-4 p-4 my-4;
+}
+
+.tiptap-content .tiptap div[data-callout][data-variant="info"] {
+  @apply bg-blue-50 border-blue-400;
+}
+
+.tiptap-content .tiptap div[data-callout][data-variant="warning"] {
+  @apply bg-yellow-50 border-yellow-400;
+}
+
+.tiptap-content .tiptap div[data-callout][data-variant="success"] {
+  @apply bg-green-50 border-green-400;
+}
+
+.tiptap-content .tiptap div[data-callout][data-variant="note"] {
+  @apply bg-slate-50 border-slate-400;
+}
+
+/* YouTube embed */
+.tiptap-content .tiptap div[data-youtube-video] {
+  @apply my-4;
+}
+
+.tiptap-content .tiptap div[data-youtube-video] iframe {
+  @apply rounded-lg w-full aspect-video;
+}
+
+/* Placeholder */
+.tiptap-content .tiptap p.is-editor-empty:first-child::before {
+  @apply text-text-muted pointer-events-none float-left h-0;
+  content: attr(data-placeholder);
+}
+
+/* Selected node */
+.tiptap-content .tiptap .ProseMirror-selectednode {
+  @apply outline-2 outline-primary outline-offset-2;
+}

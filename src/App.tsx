@@ -7,6 +7,7 @@ import { Content } from './components/Content/Content';
 import { ContentModels } from './components/ContentModels/ContentModels';
 import { Media } from './components/Media/Media';
 import { Settings } from './components/Settings/Settings';
+import { Posts } from './components/Posts/Posts';
 import { SetupWizard } from './components/Setup/SetupWizard';
 
 function AppContent() {
@@ -37,6 +38,8 @@ function AppContent() {
     switch (currentView) {
       case 'content':
         return <Content />;
+      case 'blog':
+        return <Posts />;
       case 'content-models':
         return <ContentModels />;
       case 'media':

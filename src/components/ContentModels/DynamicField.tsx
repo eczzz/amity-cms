@@ -1,9 +1,11 @@
+import { lazy, Suspense } from 'react';
 import { FieldDefinition } from '../../types';
-import { RichTextEditor } from './RichTextEditor';
 import { MediaPicker } from './MediaPicker';
 import { ReferencePicker } from './ReferencePicker';
 import { ButtonField } from './ButtonField';
 import { ArrayField } from './ArrayField';
+
+const TipTapEditor = lazy(() => import('../TipTapEditor'));
 
 interface DynamicFieldProps {
   field: FieldDefinition;
@@ -41,11 +43,18 @@ export function DynamicField({ field, value, onChange, error }: DynamicFieldProp
 
       case 'rich_text':
         return (
-          <RichTextEditor
-            value={value || ''}
-            onChange={onChange}
-            placeholder={field.options?.placeholder}
-          />
+          <Suspense fallback={
+            <div className="border border-bg-slate rounded-lg p-4 text-text-muted text-small">
+              Loading editor...
+            </div>
+          }>
+            <TipTapEditor
+              value={value || ''}
+              onChange={onChange}
+              placeholder={field.options?.placeholder || 'Start writing...'}
+              minHeight="medium"
+            />
+          </Suspense>
         );
 
       case 'number':

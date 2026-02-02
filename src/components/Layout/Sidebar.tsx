@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, faSignOutAlt, faImages, faCubes, faFileLines } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faSignOutAlt, faImages, faCubes, faFileLines, faNewspaper } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../contexts/AuthContext';
 import { useConfig } from '../../contexts/ConfigContext';
 
@@ -17,6 +17,7 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
 
   const menuItems = [
     { id: 'content', label: 'Content', icon: faFileLines },
+    { id: 'blog', label: 'Blog Posts', icon: faNewspaper },
     { id: 'content-models', label: 'Content Models', icon: faCubes },
     { id: 'media', label: 'Media', icon: faImages },
     { id: 'settings', label: 'Settings', icon: faCog },

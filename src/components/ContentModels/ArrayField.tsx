@@ -164,7 +164,7 @@ export function ArrayField({ itemFields, value, onChange }: ArrayFieldProps) {
         return (
           <MediaPicker
             value={fieldValue || null}
-            onChange={(url) => updateItem(itemIndex, itemField.api_identifier, url || '')}
+            onChange={(mediaVal) => updateItem(itemIndex, itemField.api_identifier, mediaVal || '')}
           />
         );
 

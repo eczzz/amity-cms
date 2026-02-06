@@ -159,7 +159,8 @@ export function FieldEditor({ field, existingFields, onSave, onClose }: FieldEdi
       case 'media':
         return (
           <div className="bg-blue-50 border border-blue-200 rounded-md px-4 py-3 text-tiny text-blue-800">
-            Accepts an image upload from your media library or an external URL. The stored value is always a URL string — no UUID resolution needed. Frontend receives a direct URL to the file.
+            Accepts an image upload from your media library or an external URL. The stored value is an object with{' '}
+            <code className="bg-blue-100 px-1 rounded">{'{ url, photographer, route }'}</code> — photographer and route are optional text fields for attribution. Frontend receives the full object.
           </div>
         );
       case 'button':

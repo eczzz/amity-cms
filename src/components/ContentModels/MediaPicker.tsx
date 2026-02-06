@@ -1,15 +1,16 @@
 import { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faImage, faTimes, faCheck, faUpload, faSpinner, faLink } from '@fortawesome/free-solid-svg-icons';
-import { Media } from '../../types';
+import type { Media, MediaValue } from '../../types';
 import { getSupabase } from '../../lib/supabase';
 import { requestPresignedUrl, uploadToR2, saveMediaMetadata } from '../../lib/r2';
 import { validateFile } from '../../lib/fileValidation';
 import { useAuth } from '../../contexts/AuthContext';
+import { normalizeMediaValue } from '../../lib/mediaUtils';
 
 interface MediaPickerProps {
-  value: string | null;
-  onChange: (url: string | null) => void;
+  value: MediaValue | string | null;
+  onChange: (value: MediaValue | null) => void;
 }
 
 export function MediaPicker({ value, onChange }: MediaPickerProps) {
@@ -25,7 +26,17 @@ export function MediaPicker({ value, onChange }: MediaPickerProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
 
-  const isImage = value && /\.(png|jpe?g|gif|webp|svg)(\?.*)?$/i.test(value);
+  const mediaValue = normalizeMediaValue(value);
+  const url = mediaValue?.url || null;
+  const isImage = url && /\.(png|jpe?g|gif|webp|svg)(\?.*)?$/i.test(url);
+
+  const emitWithMetadata = (newUrl: string) => {
+    onChange({
+      url: newUrl,
+      photographer: mediaValue?.photographer || '',
+      route: mediaValue?.route || '',
+    });
+  };
 
   const loadMedia = async () => {
     try {
@@ -46,14 +57,14 @@ export function MediaPicker({ value, onChange }: MediaPickerProps) {
 
   const handleOpen = () => {
     setIsOpen(true);
-    setUrlInput(value || '');
+    setUrlInput(url || '');
     setUrlError(null);
     setUploadError(null);
     loadMedia();
   };
 
   const handleSelect = (item: Media) => {
-    onChange(item.url);
+    emitWithMetadata(item.url);
     setIsOpen(false);
   };
 
@@ -94,8 +105,7 @@ export function MediaPicker({ value, onChange }: MediaPickerProps) {
 
       await loadMedia();
 
-      // Emit the URL directly
-      onChange(publicUrl);
+      emitWithMetadata(publicUrl);
       setIsOpen(false);
 
       setUploadProgress(100);
@@ -129,48 +139,88 @@ export function MediaPicker({ value, onChange }: MediaPickerProps) {
       }
     }
     setUrlError(null);
-    onChange(trimmed);
+    emitWithMetadata(trimmed);
     setIsOpen(false);
+  };
+
+  const handlePhotographerChange = (photographer: string) => {
+    if (!mediaValue) return;
+    onChange({ ...mediaValue, photographer });
+  };
+
+  const handleRouteChange = (route: string) => {
+    if (!mediaValue) return;
+    onChange({ ...mediaValue, route });
   };
 
   return (
     <div>
-      {value ? (
-        <div className="flex items-center gap-3">
-          <div className="w-20 h-20 rounded-md overflow-hidden bg-bg-light-gray flex items-center justify-center">
-            {isImage ? (
-              <img
-                src={value}
-                alt="Selected media"
-                className="w-full h-full object-cover"
+      {url ? (
+        <>
+          <div className="flex items-center gap-3">
+            <div className="w-20 h-20 rounded-md overflow-hidden bg-bg-light-gray flex items-center justify-center">
+              {isImage ? (
+                <img
+                  src={url}
+                  alt="Selected media"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <FontAwesomeIcon icon={faImage} className="w-8 h-8 text-text-muted" />
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-small text-text-primary font-medium truncate">
+                {url}
+              </div>
+              <div className="text-tiny text-text-muted">
+                {isImage ? 'Image' : 'File'} URL
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleClear}
+              className="btn-secondary py-1 px-3 text-tiny"
+            >
+              Clear
+            </button>
+            <button
+              type="button"
+              onClick={handleOpen}
+              className="btn-primary py-1 px-3 text-tiny"
+            >
+              Change
+            </button>
+          </div>
+
+          {/* Photographer & Route metadata */}
+          <div className="mt-3 space-y-2 border-t border-gray-100 pt-3">
+            <div>
+              <label className="block text-tiny font-medium text-text-muted mb-1">
+                Photographer
+              </label>
+              <input
+                type="text"
+                value={mediaValue?.photographer || ''}
+                onChange={(e) => handlePhotographerChange(e.target.value)}
+                className="w-full px-3 py-1.5 text-small border border-gray-300 rounded-md"
+                placeholder="Photographer name (optional)"
               />
-            ) : (
-              <FontAwesomeIcon icon={faImage} className="w-8 h-8 text-text-muted" />
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-small text-text-primary font-medium truncate">
-              {value}
             </div>
-            <div className="text-tiny text-text-muted">
-              {isImage ? 'Image' : 'File'} URL
+            <div>
+              <label className="block text-tiny font-medium text-text-muted mb-1">
+                Route
+              </label>
+              <input
+                type="text"
+                value={mediaValue?.route || ''}
+                onChange={(e) => handleRouteChange(e.target.value)}
+                className="w-full px-3 py-1.5 text-small border border-gray-300 rounded-md"
+                placeholder="Route name (optional)"
+              />
             </div>
           </div>
-          <button
-            type="button"
-            onClick={handleClear}
-            className="btn-secondary py-1 px-3 text-tiny"
-          >
-            Clear
-          </button>
-          <button
-            type="button"
-            onClick={handleOpen}
-            className="btn-primary py-1 px-3 text-tiny"
-          >
-            Change
-          </button>
-        </div>
+        </>
       ) : (
         <button
           type="button"
@@ -282,7 +332,7 @@ export function MediaPicker({ value, onChange }: MediaPickerProps) {
                           type="button"
                           onClick={() => handleSelect(item)}
                           className={`card-hover p-3 text-left ${
-                            value === item.url ? 'ring-2 ring-primary' : ''
+                            url === item.url ? 'ring-2 ring-primary' : ''
                           }`}
                         >
                           <div className="aspect-square rounded-md overflow-hidden bg-bg-light-gray mb-2 flex items-center justify-center">
@@ -302,7 +352,7 @@ export function MediaPicker({ value, onChange }: MediaPickerProps) {
                           <div className="text-tiny text-text-primary truncate">
                             {item.filename}
                           </div>
-                          {value === item.url && (
+                          {url === item.url && (
                             <div className="flex items-center gap-1 text-primary mt-1">
                               <FontAwesomeIcon icon={faCheck} className="w-3 h-3" />
                               <span className="text-tiny">Selected</span>

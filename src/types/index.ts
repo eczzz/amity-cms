@@ -113,6 +113,12 @@ export interface ContentModel {
   updated_at: string;
 }
 
+export interface MediaValue {
+  url: string;
+  photographer: string;
+  route: string;
+}
+
 export interface ContentEntry {
   id: string;
   content_model_id: string;

@@ -23,6 +23,13 @@ export function validateField(
       return `${field.name} must have at least one item`;
     }
     return null;
+  } else if (field.field_type === 'media') {
+    // Media can be a plain URL string (legacy) or { url, photographer, route }
+    const mediaUrl = typeof value === 'string' ? value : (value?.url || '');
+    if (field.required && !mediaUrl) {
+      return `${field.name} is required`;
+    }
+    if (!mediaUrl) return null;
   } else {
     if (field.required && !value && value !== 0 && value !== false) {
       return `${field.name} is required`;
@@ -76,18 +83,25 @@ export function validateField(
       }
       break;
 
-    case 'media':
-      // Media fields store URLs
-      if (typeof value === 'string' && value.length > 0) {
+    case 'media': {
+      // Media fields can be a plain URL string (legacy) or { url, photographer, route }
+      let mediaUrl: string | null = null;
+      if (typeof value === 'string') {
+        mediaUrl = value;
+      } else if (typeof value === 'object' && value !== null && typeof value.url === 'string') {
+        mediaUrl = value.url;
+      }
+      if (mediaUrl && mediaUrl.length > 0) {
         try {
-          new URL(value);
+          new URL(mediaUrl);
         } catch {
-          if (!value.startsWith('/')) {
+          if (!mediaUrl.startsWith('/')) {
             return `${field.name} must be a valid URL`;
           }
         }
       }
       break;
+    }
 
     case 'reference':
       // References should be UUIDs
